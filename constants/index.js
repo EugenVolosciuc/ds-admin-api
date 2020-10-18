@@ -1,0 +1,9 @@
+const USER_ROLES = require('./USER_ROLES');
+const VEHICLE_STATUSES = require('./VEHICLE_STATUSES');
+const VEHICLE_CATEGORIES = require('./VEHICLE_CATEGORIES');
+
+module.exports = {
+    USER_ROLES,
+    VEHICLE_STATUSES,
+    VEHICLE_CATEGORIES
+}
