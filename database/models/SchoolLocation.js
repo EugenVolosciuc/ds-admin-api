@@ -11,6 +11,8 @@ const schoolLocationSchema = mongoose.Schema({
         required: [true, 'Address is required']
     },
     // TODO: add working hours
+}, {
+    timestamps: true
 });
 
 const SchoolLocation = mongoose.model('SchoolLocation', schoolLocationSchema);

@@ -49,17 +49,21 @@ module.exports.createUser = async (req, res) => {
             return res.status(400).send({ message: 'A user with this phone number already exists' });
         }
 
+        // TODO: Create a parameter for this request (ex. withPassword) 
+        // to decide if the password is sent by the user (user registers by himself) or from the admin panel (password generated on the backend, sent to email and phone number)
+        // In the meantime it will always be 'password' if no pass is provided
         const user = await User.create({
             firstName,
             lastName,
             email,
             phoneNumber,
-            password,
+            password: password || 'password',
             role
         });
-        const token = createToken(user._id);
+        // TODO: Think if needed to add token, I guess not
+        // const token = createToken(user._id);
 
-        res.cookie('token', token, { httpOnly: true, maxAge: maxAge * 1000 });
+        // res.cookie('token', token, { httpOnly: true, maxAge: maxAge * 1000 });
         res.status(201).json(user);
     } catch (err) {
         const { status, error } = errorHandler(err);

@@ -13,6 +13,8 @@ const schoolSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }
+}, {
+    timestamps: true
 });
 
 const School = mongoose.model('School', schoolSchema);

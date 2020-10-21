@@ -7,18 +7,18 @@ const { paginate } = require('../middleware/paginationMiddleware');
 
 const router = express.Router();
 
-router.get('/', requireAuth, paginate(User, ['school']), getUsers);
+router.get('/', requireAuth(), paginate(User, ['school']), getUsers);
 
-router.get('/me', requireAuth, getMe);
+router.get('/me', requireAuth(), getMe);
 
 router.post('/', createUser);
 
 router.post('/login', loginUser);
 
-router.post('/logout', requireAuth, logoutUser);
+router.post('/logout', requireAuth(), logoutUser);
 
-router.patch('/:id', requireAuth, updateUser);
+router.patch('/:id', requireAuth(), updateUser);
 
-router.delete('/:id', requireAuth, deleteUser);
+router.delete('/:id', requireAuth(), deleteUser);
 
 module.exports = router;

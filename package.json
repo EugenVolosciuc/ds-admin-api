@@ -4,7 +4,11 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "users:import": "node database/seeder import-users",
+    "users:delete": "node database/seeder delete-users",
+    "schools:import": "node database/seeder import-schools",
+    "schools:delete": "node database/seeder delete-schools"
   },
   "author": "Eugen Volosciuc",
   "license": "ISC",
@@ -19,6 +23,7 @@
     "validator": "^13.1.17"
   },
   "devDependencies": {
+    "faker": "^5.1.0",
     "nodemon": "^2.0.5"
   }
 }

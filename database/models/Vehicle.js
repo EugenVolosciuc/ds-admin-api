@@ -43,6 +43,8 @@ const vehicleSchema = mongoose.Schema({
             message: `Valid vehicle statuses are ${validVehicleStatuses.join(', ')}`
         }
     }
+}, {
+    timestamps: true
 });
 
 const Vehicle = mongoose.model('Vehicle', vehicleSchema);

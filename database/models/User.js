@@ -43,6 +43,8 @@ const userSchema = mongoose.Schema({
         ref: 'School',
         // required: isNotSuperAdmin
     }
+}, { 
+    timestamps: true 
 });
 
 // function isNotSuperAdmin() {
@@ -73,9 +75,6 @@ userSchema.statics.login = async function(phoneNumber, password) {
 
 
 userSchema.pre('save', async function (next) {
-
-    console.log("this.isModified('school')", this.isModified('school'))
-    console.log("this.role === USER_ROLES.SCHOOL_ADMIN.tag", this.role === USER_ROLES.SCHOOL_ADMIN.tag)
     // Has password before saving user to DB
     if (this.isModified('password')) {
         const salt = await bcrypt.genSalt(10);
