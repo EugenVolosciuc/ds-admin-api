@@ -1,18 +1,27 @@
-const errorHandler = (error, customMessage = null, status) => {
-    // console.log(error);
-    if (customMessage) {
-        return {
-            status: status || 400,
-            error: {
-                message: customMessage
-            }
-        }
-    } else {
-        return {
-            status: 400,
-            error
-        }
+const isDev = process.env.NODE_ENV === 'development';
+
+class ErrorHandler extends Error {
+    constructor(statusCode, message, error) {
+        super();
+        this.statusCode = statusCode;
+        this.message = message;
+        this.error = error;
+
+        if (error && isDev) console.error(error);
     }
 }
 
-module.exports = errorHandler
+const handleError = (err, res) => {
+    const { statusCode, message } = err;
+    res.status(statusCode).json({
+        status: "error",
+        statusCode,
+        message
+    });
+};
+
+
+module.exports = {
+    ErrorHandler,
+    handleError
+}

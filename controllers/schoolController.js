@@ -1,5 +1,5 @@
 const School = require('../database/models/School');
-const errorHandler = require('../utils/errorHandler');
+const { ErrorHandler } = require('../utils/errorHandler');
 
 // @desc    Get schools
 // @route   GET /schools
@@ -7,13 +7,12 @@ const errorHandler = require('../utils/errorHandler');
 module.exports.getSchools = async (req, res) => {
     try {
         if (!res.paginatedResults.schools) {
-            return res.status(404).json({ message: 'No schools found' });
+            throw new ErrorHandler(404, 'No schools found');
         }
-    
+
         res.send(res.paginatedResults);
-    } catch (err) {
-        const { status, error } = errorHandler(err);
-        res.status(status).json(error);
+    } catch (error) {
+        throw new ErrorHandler(500, error.message, error);
     }
 }
 
@@ -27,9 +26,8 @@ module.exports.createSchool = async (req, res) => {
         const school = await School.create({ name, country });
 
         res.status(201).json(school);
-    } catch (err) {
-        const { status, error } = errorHandler(err);
-        res.status(status).json(error);
+    } catch (error) {
+        throw new ErrorHandler(500, error.message, error);
     }
 }
 
@@ -46,23 +44,22 @@ module.exports.updateSchool = async (req, res) => {
         const school = await School.findById(schoolID);
 
         if (!school) {
-            return res.status(404).json({ message: 'No school found' });
+            throw new ErrorHandler(404, 'No school found');
         }
 
         for (const property in dataToUpdate) {
             if (possibleUpdates.includes(property)) {
                 school[property] = dataToUpdate[property];
             } else {
-                return res.status(400).json({ message: `Property not accepted: ${property}` });
+                throw new ErrorHandler(400, `Property not accepted: ${property}`);
             }
         }
 
         await school.save();
 
         res.send(school);
-    } catch (err) {
-        const { status, error } = errorHandler(err);
-        res.status(status).json(error);
+    } catch (error) {
+        throw new ErrorHandler(500, error.message, error);
     }
 }
 
@@ -75,12 +72,11 @@ module.exports.deleteSchool = async (req, res) => {
         const school = await School.findByIdAndDelete(req.params.id);
 
         if (!school) {
-            return res.status(404).send({ error: 'No school found' });
+            throw new ErrorHandler(404, 'No school found');
         }
 
         res.json(school);
-    } catch (err) {
-        const { status, error } = errorHandler(err);
-        res.status(status).json(error);
+    } catch (error) {
+        throw new ErrorHandler(500, error.message, error);
     }
 }

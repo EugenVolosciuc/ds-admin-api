@@ -3,6 +3,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
 const connectToDB = require('./database/connect');
+const { handleError } = require('./utils/errorHandler');
 
 const app = express();
 const PORT = process.env.port || 3001;
@@ -18,5 +19,10 @@ connectToDB();
 // Routes
 app.use('/users', require('./routes/userRoutes'));
 app.use('/schools', require('./routes/schoolRoutes'));
+
+// Error handling
+app.use((err, req, res, next) => {
+    handleError(err, res);
+});
 
 app.listen(PORT, console.log(`Server is running on ${process.env.NODE_ENV} on port ${PORT}`));

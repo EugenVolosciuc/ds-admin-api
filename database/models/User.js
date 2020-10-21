@@ -88,8 +88,6 @@ userSchema.pre('save', async function (next) {
 
             school.admin = this._id;
 
-            console.log("school!!!", school);
-
             await school.save();
         } catch (error) {
             throw new Error(error.message);

@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 const User = require('../database/models/User');
-const errorHandler = require('../utils/errorHandler');
+const { ErrorHandler } = require('../utils/errorHandler');
 
 const maxAge = 3 * 24 * 60 * 60; // days, hours, minutes, seconds
 
@@ -14,13 +14,12 @@ const createToken = id => {
 module.exports.getUsers = async (req, res) => {
     try {
         if (!res.paginatedResults.users) {
-            return res.status(404).json({ message: 'No users found' });
+            throw new ErrorHandler(404, 'No users found');
         }
 
         res.send(res.paginatedResults);
-    } catch (err) {
-        const { status, error } = errorHandler(err);
-        res.status(status).json(error);
+    } catch (error) {
+        throw new ErrorHandler(500, error.message, error);
     }
 }
 
@@ -30,9 +29,8 @@ module.exports.getUsers = async (req, res) => {
 module.exports.getMe = async (req, res) => {
     try {
         res.send(req.user);
-    } catch (err) {
-        const { status, error } = errorHandler(err);
-        res.status(status).json(error);
+    } catch (error) {
+        throw new ErrorHandler(500, error.message, error);
     }
 }
 
@@ -46,7 +44,7 @@ module.exports.createUser = async (req, res) => {
         const userExists = await User.findOne({ phoneNumber });
 
         if (userExists) {
-            return res.status(400).send({ message: 'A user with this phone number already exists' });
+            throw new ErrorHandler(400, 'A user with this phone number already exists');
         }
 
         // TODO: Create a parameter for this request (ex. withPassword) 
@@ -60,14 +58,10 @@ module.exports.createUser = async (req, res) => {
             password: password || 'password',
             role
         });
-        // TODO: Think if needed to add token, I guess not
-        // const token = createToken(user._id);
-
-        // res.cookie('token', token, { httpOnly: true, maxAge: maxAge * 1000 });
+        
         res.status(201).json(user);
-    } catch (err) {
-        const { status, error } = errorHandler(err);
-        res.status(status).json(error);
+    } catch (error) {
+        throw new ErrorHandler(500, error.message, error);
     }
 };
 
@@ -82,9 +76,8 @@ module.exports.loginUser = async (req, res) => {
 
         res.cookie('token', token, { httpOnly: true, maxAge: maxAge * 1000 });
         res.status(200).json(user);
-    } catch (err) {
-        const { status, error } = errorHandler(err);
-        res.status(status).json(error);
+    } catch (error) {
+        throw new ErrorHandler(500, error.message, error);
     }
 }
 
@@ -95,9 +88,8 @@ module.exports.logoutUser = (req, res) => {
     try {
         res.cookie('token', '', { maxAge: 1 });
         res.send({ message: 'Logged out' });
-    } catch (err) {
-        const { status, error } = errorHandler(err);
-        res.status(status).json(error);
+    } catch (error) {
+        throw new ErrorHandler(500, error.message, error);
     }
 }
 
@@ -115,16 +107,15 @@ module.exports.updateUser = async (req, res) => {
             if (possibleUpdates.includes(property)) {
                 user[property] = dataToUpdate[property];
             } else {
-                return res.status(400).json({ message: `Property not accepted: ${property}` });
+                throw new ErrorHandler(400, `Property not accepted: ${property}`);
             }
         }
 
         await user.save();
 
         res.send(user);
-    } catch (err) {
-        const { status, error } = errorHandler(err);
-        res.status(status).json(error);
+    } catch (error) {
+        throw new ErrorHandler(500, error.message, error);
     }
 }
 
@@ -137,12 +128,11 @@ module.exports.deleteUser = async (req, res) => {
         const user = await User.findByIdAndDelete(req.params.id);
 
         if (!user) {
-            return res.status(404).send({ error: 'No user found' });
+            throw new ErrorHandler(404, 'No user found');
         }
 
         res.json(user);
-    } catch (err) {
-        const { status, error } = errorHandler(err);
-        res.status(status).json(error);
+    } catch (error) {
+        throw new ErrorHandler(500, error.message, error);
     }
 }

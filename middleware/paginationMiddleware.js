@@ -1,4 +1,4 @@
-const errorHandler = require('../utils/errorHandler');
+const { ErrorHandler } = require('../utils/errorHandler');
 
 // Populated fields (array of fields of collection strings that should be populated)
 module.exports.paginate = (model, populatedFields) => {
@@ -45,10 +45,8 @@ module.exports.paginate = (model, populatedFields) => {
 
             res.paginatedResults = results;
             next();
-        } catch (err) {
-            console.log(err)
-            const { status, error } = errorHandler(err);
-            res.status(status).json(error);
+        } catch (error) {
+            throw new ErrorHandler(error.status, error.message, error);
         }
 
     };
