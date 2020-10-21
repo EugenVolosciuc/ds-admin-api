@@ -18,7 +18,7 @@ module.exports.requireAuth = roles => {
 
                 if (roles) {
                     if (!roles.includes(USER_ROLES[user.role].tag)) {
-                        throw new ErrorHandler(401, 'Please authenticate');
+                        throw new ErrorHandler(401, 'Access denied to this resource');
                     }
                 }
 

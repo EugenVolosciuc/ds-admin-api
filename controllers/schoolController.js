@@ -51,7 +51,7 @@ module.exports.updateSchool = async (req, res) => {
             if (possibleUpdates.includes(property)) {
                 school[property] = dataToUpdate[property];
             } else {
-                throw new ErrorHandler(400, `Property not accepted: ${property}`);
+                throw new ErrorHandler(400, [{ field: property, message: `Property not accepted: ${property}` }]);
             }
         }
 

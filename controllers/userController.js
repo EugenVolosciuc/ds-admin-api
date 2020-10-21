@@ -44,7 +44,7 @@ module.exports.createUser = async (req, res) => {
         const userExists = await User.findOne({ phoneNumber });
 
         if (userExists) {
-            throw new ErrorHandler(400, 'A user with this phone number already exists');
+            throw new ErrorHandler(400, [{ field: 'phoneNumber', message: 'A user with this phone number already exists' }]);
         }
 
         // TODO: Create a parameter for this request (ex. withPassword) 
@@ -68,16 +68,18 @@ module.exports.createUser = async (req, res) => {
 // @desc    Login user
 // @route   POST /users/login
 // @access  Public
-module.exports.loginUser = async (req, res) => {
+module.exports.loginUser = async (req, res, next) => {
     const { phoneNumber, password } = req.body;
+    
     try {
         const user = await User.login(phoneNumber, password);
+
         const token = createToken(user._id);
 
         res.cookie('token', token, { httpOnly: true, maxAge: maxAge * 1000 });
         res.status(200).json(user);
     } catch (error) {
-        throw new ErrorHandler(500, error.message, error);
+        next(error);
     }
 }
 
@@ -107,7 +109,7 @@ module.exports.updateUser = async (req, res) => {
             if (possibleUpdates.includes(property)) {
                 user[property] = dataToUpdate[property];
             } else {
-                throw new ErrorHandler(400, `Property not accepted: ${property}`);
+                throw new ErrorHandler(400, [{ field: property, message: `Property not accepted: ${property}` }]);
             }
         }
 

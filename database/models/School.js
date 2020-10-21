@@ -12,7 +12,11 @@ const schoolSchema = mongoose.Schema({
     admin: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
-    }
+    },
+    locations: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'SchoolLocation'
+    }]
 }, {
     timestamps: true
 });

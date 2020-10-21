@@ -6,8 +6,8 @@ module.exports.paginate = (model, populatedFields) => {
         try {
             const page = parseInt(req.query.page) || 1;
             const perPage = parseInt(req.query.perPage) || 15;
-            const sortBy = JSON.parse(req.query.sortBy) || { createdAt: 'descending' };
-            // const filters = req.query.filters || {};
+            const sortBy = req.query.sortBy ? JSON.parse(req.query.sortBy) : { createdAt: 'descending' };
+            const filters = req.query.filters ? JSON.parse(req.query.filters) : {};
 
             const startIndex = (page - 1) * perPage;
             const endIndex = page * perPage;
@@ -31,13 +31,19 @@ module.exports.paginate = (model, populatedFields) => {
                 };
             };
 
-            let queryResults = model.find().sort(sortBy).limit(perPage).skip(startIndex);
-            if (Array.isArray(populatedFields)) queryResults = queryResults.populate(populatedFields);
+            let query = model.find().sort(sortBy).limit(perPage).skip(startIndex);
 
-            queryResults = await queryResults.exec();
+            if (Array.isArray(populatedFields)) {
+                query = query.populate(populatedFields);
+            }
+
+            const queryResults = await query.exec();
+
             results[model.collection.collectionName] = queryResults;
 
             const totalItems = await model.estimatedDocumentCount();
+
+            console.log("TOTAL ITEMS", totalItems)
             const totalPages = Math.ceil(totalItems / perPage);
 
             results.totalItems = totalItems;
@@ -48,6 +54,5 @@ module.exports.paginate = (model, populatedFields) => {
         } catch (error) {
             throw new ErrorHandler(error.status, error.message, error);
         }
-
     };
 };

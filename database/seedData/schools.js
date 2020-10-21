@@ -1,7 +1,7 @@
 const schools = [
     {
         name: 'Auto Iordache',
-        country: 'Romania'
+        country: 'Romania',
     },
     {
         name: 'AutoFany',

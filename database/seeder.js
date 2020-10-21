@@ -9,10 +9,11 @@ const importUsers = async () => {
     try {
         await deleteUsers();
 
-        const users = require('./seedData/users');
+        const getUsers = require('./seedData/users');
+        const users = await getUsers();
 
         console.log(`Importing ${users.length} users...`);
-        await User.insertMany(users);
+        await User.create(users);
 
         console.log("Users imported successfuly!");
     } catch (error) {
@@ -40,7 +41,7 @@ const importSchools = async () => {
         const schools = require('./seedData/schools');
 
         console.log(`Importing ${schools.length} schools...`);
-        await School.insertMany(schools);
+        await School.create(schools);
 
         console.log("Schools imported successfuly!");
     } catch (error) {
@@ -78,7 +79,7 @@ const mainSeedProcess = async () => {
             await deleteSchools();
             break;
         default:
-            console.log("Please provide a valid argument: import-users | delete-users")
+            console.log("Please provide a valid argument")
     }
 
     process.exit();

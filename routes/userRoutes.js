@@ -11,7 +11,7 @@ const router = express.Router();
 router.get(
     '/', 
     requireAuth([
-        // USER_ROLES.SUPER_ADMIN.tag,
+        USER_ROLES.SUPER_ADMIN.tag,
         USER_ROLES.SCHOOL_ADMIN.tag,
         USER_ROLES.LOCATION_ADMIN.tag,
         USER_ROLES.INSTRUCTOR.tag

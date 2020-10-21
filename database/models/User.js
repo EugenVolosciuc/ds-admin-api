@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 
 const { USER_ROLES } = require('../../constants');
 const School = require('./School');
+const { ErrorHandler } = require('../../utils/errorHandler');
 
 const validUserRoles = Object.keys(USER_ROLES);
 
@@ -67,15 +68,16 @@ userSchema.statics.login = async function(phoneNumber, password) {
 
     if (user) {
         const auth = await bcrypt.compare(password, user.password);
-        if (auth) return user
-    }
 
-    throw new Error('Incorrect phone number or password');
+        if (auth) return user
+    } 
+
+    throw new ErrorHandler(401, 'Incorrect phone number or password');
 }
 
 
 userSchema.pre('save', async function (next) {
-    // Has password before saving user to DB
+    // Hash password before saving user to DB
     if (this.isModified('password')) {
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
@@ -90,7 +92,7 @@ userSchema.pre('save', async function (next) {
 
             await school.save();
         } catch (error) {
-            throw new Error(error.message);
+            next(error);
         }
     }
 
