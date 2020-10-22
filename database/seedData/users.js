@@ -1,9 +1,9 @@
-const bcrypt = require('bcryptjs');
+// const bcrypt = require('bcryptjs');
 const faker = require('faker');
 
 const { USER_ROLES } = require('../../constants');
 const getRandomInt = require('../../utils/getRandomInt');
-const School = require('../models/School');
+const getSchoolIDs = require('../../utils/getSchoolIDs');
 
 const getRandomRoleForFakeUsers = () => {
     // No fake super admin or school admin
@@ -20,10 +20,6 @@ const getFakeUsers = schoolIDs => {
         const firstName = faker.name.firstName();
         const lastName = faker.name.lastName();
 
-        console.log("Object.values(schoolIDs)", Object.values(schoolIDs))
-        console.log("getRandomInt(0, schoolIDs.length - 1)", getRandomInt(-1, Object.values(schoolIDs).length - 1))
-        console.log("Object.values(schoolIDs)[getRandomInt(-1, schoolIDs.length - 1)]", Object.values(schoolIDs)[getRandomInt(-1, Object.values(schoolIDs).length - 1)])
-        
         users.push({
             firstName,
             lastName,
@@ -38,18 +34,6 @@ const getFakeUsers = schoolIDs => {
     }
 
     return users;
-}
-
-const getSchoolIDs = async () => {
-    const autoIordache = await School.findOne({ name: 'Auto Iordache' });
-    const autoFany = await School.findOne({ name: 'AutoFany' });
-    const autoCriss = await School.findOne({ name: 'AutoCriss' });
-
-    return {
-        autoIordache: autoIordache._id,
-        autoFany: autoFany._id,
-        autoCriss: autoCriss._id
-    }
 }
 
 const getUsers = async () => {

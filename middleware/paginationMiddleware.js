@@ -31,7 +31,7 @@ module.exports.paginate = (model, populatedFields) => {
                 };
             };
 
-            let query = model.find().sort(sortBy).limit(perPage).skip(startIndex);
+            let query = model.find(filters).sort(sortBy).limit(perPage).skip(startIndex);
 
             if (Array.isArray(populatedFields)) {
                 query = query.populate(populatedFields);
@@ -41,9 +41,7 @@ module.exports.paginate = (model, populatedFields) => {
 
             results[model.collection.collectionName] = queryResults;
 
-            const totalItems = await model.estimatedDocumentCount();
-
-            console.log("TOTAL ITEMS", totalItems)
+            const totalItems = await model.find(filters).countDocuments();
             const totalPages = Math.ceil(totalItems / perPage);
 
             results.totalItems = totalItems;

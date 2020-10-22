@@ -19,10 +19,13 @@ connectToDB();
 // Routes
 app.use('/users', require('./routes/userRoutes'));
 app.use('/schools', require('./routes/schoolRoutes'));
+app.use('/vehicles', require('./routes/vehicleRoutes'));
+app.use('/school-locations', require('./routes/schoolLocationRoutes'));
 
 // Error handling
 app.use((err, req, res, next) => {
     handleError(err, res);
 });
 
+// Run server
 app.listen(PORT, console.log(`Server is running on ${process.env.NODE_ENV} on port ${PORT}`));

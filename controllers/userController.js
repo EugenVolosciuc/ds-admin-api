@@ -11,6 +11,9 @@ const createToken = id => {
     });
 }
 
+// @desc    Get users
+// @route   GET /users
+// @access  Private
 module.exports.getUsers = async (req, res) => {
     try {
         if (!res.paginatedResults.users) {

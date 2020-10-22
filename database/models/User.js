@@ -41,16 +41,15 @@ const userSchema = mongoose.Schema({
     },
     school: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'School',
-        // required: isNotSuperAdmin
+        ref: 'School'
+    },
+    location: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'SchoolLocation'
     }
 }, { 
-    timestamps: true 
+    timestamps: true
 });
-
-// function isNotSuperAdmin() {
-//     return this.role !== USER_ROLES.SUPER_ADMIN.tag
-// }
 
 // Remove password from the returned user object
 userSchema.methods.toJSON = function () {

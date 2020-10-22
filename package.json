@@ -5,10 +5,14 @@
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
-    "users:import": "node database/seeder import-users",
-    "users:delete": "node database/seeder delete-users",
-    "schools:import": "node database/seeder import-schools",
-    "schools:delete": "node database/seeder delete-schools"
+    "import:users": "node database/seeder import-users",
+    "delete:users": "node database/seeder delete-users",
+    "import:schools": "node database/seeder import-schools",
+    "delete:schools": "node database/seeder delete-schools",
+    "import:school-locations": "node database/seeder import-school-locations",
+    "delete:school-locations": "node database/seeder delete-school-locations",
+    "import:vehicles": "node database/seeder import-vehicles",
+    "delete:vehicles": "node database/seeder delete-vehicles"
   },
   "author": "Eugen Volosciuc",
   "license": "ISC",

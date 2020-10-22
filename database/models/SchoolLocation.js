@@ -1,10 +1,18 @@
 const mongoose = require('mongoose');
 
 const schoolLocationSchema = mongoose.Schema({
+    name: {
+        type: String,
+        required: [true, 'Name is required']
+    },
     school: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'School',
         required: [true, 'School is required']
+    },
+    city: {
+        type: String,
+        required: [true, 'City is required']
     },
     address: {
         type: String,
