@@ -4,6 +4,7 @@ const { createUser, loginUser, getMe, deleteUser, logoutUser, getUsers, updateUs
 const User = require('../database/models/User');
 const { requireAuth } = require('../middleware/authMiddleware');
 const { paginate } = require('../middleware/paginationMiddleware');
+const { addLoggedUser } = require('../middleware/addLoggedUserMiddleware');
 const { USER_ROLES } = require('../constants');
 
 const router = express.Router();
@@ -22,7 +23,7 @@ router.get(
 
 router.get('/me', requireAuth(), getMe);
 
-router.post('/', createUser);
+router.post('/', addLoggedUser, createUser);
 
 router.post('/login', loginUser);
 

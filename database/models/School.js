@@ -16,7 +16,8 @@ const schoolSchema = mongoose.Schema({
     locations: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'SchoolLocation'
-    }]
+    }],
+    // TODO: when pricing options will be defined (probably as a collection itself), I'll have to add the option in here so that I know how many locations a school can have
 }, {
     timestamps: true
 });

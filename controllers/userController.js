@@ -14,7 +14,7 @@ const createToken = id => {
 // @desc    Get users
 // @route   GET /users
 // @access  Private
-module.exports.getUsers = async (req, res) => {
+module.exports.getUsers = async (req, res, next) => {
     try {
         if (!res.paginatedResults.users) {
             throw new ErrorHandler(404, 'No users found');
@@ -22,25 +22,25 @@ module.exports.getUsers = async (req, res) => {
 
         res.send(res.paginatedResults);
     } catch (error) {
-        throw new ErrorHandler(500, error.message, error);
+        next(error);
     }
 }
 
 // @desc    Get logged in user
 // @route   GET /users/me
 // @access  Private
-module.exports.getMe = async (req, res) => {
+module.exports.getMe = async (req, res, next) => {
     try {
         res.send(req.user);
     } catch (error) {
-        throw new ErrorHandler(500, error.message, error);
+        next(error);
     }
 }
 
 // @desc    Create user
 // @route   POST /users
 // @access  Public
-module.exports.createUser = async (req, res) => {
+module.exports.createUser = async (req, res, next) => {
     const { firstName, lastName, email, phoneNumber, password, role } = req.body;
 
     try {
@@ -48,6 +48,18 @@ module.exports.createUser = async (req, res) => {
 
         if (userExists) {
             throw new ErrorHandler(400, [{ field: 'phoneNumber', message: 'A user with this phone number already exists' }]);
+        }
+
+        let schoolID;
+        let locationID;
+        if (req.user) {
+            const loggedInUser = req.user;
+
+            // Add school to new user if created by a school admin or a location admin
+            schoolID = loggedInUser.school;
+
+            // Add location to new user if created by a location admin
+            locationID = loggedInUser.location; 
         }
 
         // TODO: Create a parameter for this request (ex. withPassword) 
@@ -59,12 +71,14 @@ module.exports.createUser = async (req, res) => {
             email,
             phoneNumber,
             password: password || 'password',
-            role
+            role,
+            ...(schoolID && { school: schoolID }),
+            ...(locationID && { location: locationID })
         });
         
         res.status(201).json(user);
     } catch (error) {
-        throw new ErrorHandler(500, error.message, error);
+        next(error);
     }
 };
 
@@ -89,19 +103,19 @@ module.exports.loginUser = async (req, res, next) => {
 // @desc    Logout user
 // @route   POST /users/logout
 // @access  Private
-module.exports.logoutUser = (req, res) => {
+module.exports.logoutUser = (req, res, next) => {
     try {
         res.cookie('token', '', { maxAge: 1 });
         res.send({ message: 'Logged out' });
     } catch (error) {
-        throw new ErrorHandler(500, error.message, error);
+        next(error);
     }
 }
 
 // @desc    Update user
 // @route   PATCH /users/:id
 // @access  Private
-module.exports.updateUser = async (req, res) => {
+module.exports.updateUser = async (req, res, next) => {
     const possibleUpdates = Object.keys(User.schema.obj);
 
     const dataToUpdate = req.body;
@@ -120,14 +134,14 @@ module.exports.updateUser = async (req, res) => {
 
         res.send(user);
     } catch (error) {
-        throw new ErrorHandler(500, error.message, error);
+        next(error);
     }
 }
 
 // @desc    Delete user
 // @route   DELETE /users/:id
 // @access  Private
-module.exports.deleteUser = async (req, res) => {
+module.exports.deleteUser = async (req, res, next) => {
     try {
         // TODO: restrict who can delete users
         const user = await User.findByIdAndDelete(req.params.id);
@@ -138,6 +152,6 @@ module.exports.deleteUser = async (req, res) => {
 
         res.json(user);
     } catch (error) {
-        throw new ErrorHandler(500, error.message, error);
+        next(error);
     }
 }
