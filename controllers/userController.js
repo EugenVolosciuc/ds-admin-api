@@ -37,6 +37,36 @@ module.exports.getMe = async (req, res, next) => {
     }
 }
 
+// @desc    Search users
+// @route   GET /users/search
+// @access  Private
+module.exports.searchUsers = async (req, res, next) => {
+    const { search, school, role } = req.query;
+
+    if (!search) {
+        throw new ErrorHandler(400, 'No search params provided');
+    }
+
+    try {
+        const searchFields = JSON.parse(search);
+
+        const searchableFields = Object.entries(searchFields).reduce((acc, currentValue) => {
+            acc[currentValue[0]] = new RegExp(currentValue[1], "i");
+            return acc;
+        }, {});
+
+        const users = await User.find({ 
+            ...searchableFields, 
+            school,
+            ...(role && { role })
+        });
+
+        res.json(users);
+    } catch (error) {
+        next(error);
+    }
+}
+
 // @desc    Create user
 // @route   POST /users
 // @access  Public

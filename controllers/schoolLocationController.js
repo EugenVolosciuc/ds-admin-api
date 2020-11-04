@@ -15,3 +15,29 @@ module.exports.getSchoolLocations = (req, res, next) => {
         next(error);
     }
 }
+
+// @desc    Search school locations
+// @route   GET /school-locations/search
+// @access  Private
+module.exports.searchSchoolLocations = async (req, res, next) => {
+    const { search, school } = req.query;
+
+    if (!search) {
+        throw new ErrorHandler(400, 'No search params provided');
+    }
+
+    try {
+        const searchFields = JSON.parse(search);
+
+        const searchableFields = Object.entries(searchFields).reduce((acc, currentValue) => {
+            acc[currentValue[0]] = new RegExp(currentValue[1], "i");
+            return acc;
+        }, {});
+
+        const schoolLocations = await SchoolLocation.find({ ...searchableFields, school });
+
+        res.json(schoolLocations);
+    } catch (error) {
+        next(error);
+    }
+}

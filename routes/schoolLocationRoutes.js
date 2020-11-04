@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { getSchoolLocations } = require('../controllers/schoolLocationController');
+const { getSchoolLocations, searchSchoolLocations } = require('../controllers/schoolLocationController');
 const SchoolLocation = require('../database/models/SchoolLocation');
 const { requireAuth } = require('../middleware/authMiddleware');
 const { paginate } = require('../middleware/paginationMiddleware');
@@ -16,6 +16,15 @@ router.get(
     ]),
     paginate(SchoolLocation),
     getSchoolLocations
+);
+
+router.get(
+    '/search',
+    requireAuth([
+        USER_ROLES.SUPER_ADMIN.tag,
+        USER_ROLES.SCHOOL_ADMIN.tag
+    ]),
+    searchSchoolLocations
 );
 
 module.exports = router;

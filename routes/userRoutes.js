@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { createUser, loginUser, getMe, deleteUser, logoutUser, getUsers, updateUser } = require('../controllers/userController');
+const { createUser, searchUsers, loginUser, getMe, deleteUser, logoutUser, getUsers, updateUser } = require('../controllers/userController');
 const User = require('../database/models/User');
 const { requireAuth } = require('../middleware/authMiddleware');
 const { paginate } = require('../middleware/paginationMiddleware');
@@ -19,6 +19,15 @@ router.get(
     ]), 
     paginate(User, ['school']),
     getUsers
+);
+
+router.get(
+    '/search',
+    requireAuth([
+        USER_ROLES.SUPER_ADMIN.tag,
+        USER_ROLES.SCHOOL_ADMIN.tag
+    ]),
+    searchUsers
 );
 
 router.get('/me', requireAuth(), getMe);
