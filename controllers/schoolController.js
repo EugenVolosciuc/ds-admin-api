@@ -1,18 +1,17 @@
 const School = require('../database/models/School');
 const { ErrorHandler } = require('../utils/errorHandler');
+const checkForUpdatableProperties = require('../utils/updatablePropertyChecker');
 
 // @desc    Get schools
 // @route   GET /schools
 // @access  Private
 module.exports.getSchools = async (req, res) => {
     try {
-        if (!res.paginatedResults.schools) {
-            throw new ErrorHandler(404, 'No schools found');
-        }
+        if (!res.paginatedResults.schools) throw new ErrorHandler(404, 'No schools found');
 
         res.send(res.paginatedResults);
     } catch (error) {
-        throw new ErrorHandler(500, error.message, error);
+        next(error);
     }
 }
 
@@ -27,7 +26,7 @@ module.exports.createSchool = async (req, res) => {
 
         res.status(201).json(school);
     } catch (error) {
-        throw new ErrorHandler(500, error.message, error);
+        next(error);
     }
 }
 
@@ -43,23 +42,15 @@ module.exports.updateSchool = async (req, res) => {
     try {
         const school = await School.findById(schoolID);
 
-        if (!school) {
-            throw new ErrorHandler(404, 'No school found');
-        }
+        if (!school) throw new ErrorHandler(404, 'No school found');
 
-        for (const property in dataToUpdate) {
-            if (possibleUpdates.includes(property)) {
-                school[property] = dataToUpdate[property];
-            } else {
-                throw new ErrorHandler(400, [{ field: property, message: `Property not accepted: ${property}` }]);
-            }
-        }
+        checkForUpdatableProperties(school, dataToUpdate, possibleUpdates);
 
         await school.save();
 
         res.send(school);
     } catch (error) {
-        throw new ErrorHandler(500, error.message, error);
+        next(error);
     }
 }
 
@@ -71,12 +62,10 @@ module.exports.deleteSchool = async (req, res) => {
         // TODO: restrict who can delete school
         const school = await School.findByIdAndDelete(req.params.id);
 
-        if (!school) {
-            throw new ErrorHandler(404, 'No school found');
-        }
+        if (!school) throw new ErrorHandler(404, 'No school found');
 
         res.json(school);
     } catch (error) {
-        throw new ErrorHandler(500, error.message, error);
+        next(error);
     }
 }

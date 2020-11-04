@@ -16,9 +16,7 @@ const createToken = id => {
 // @access  Private
 module.exports.getUsers = async (req, res, next) => {
     try {
-        if (!res.paginatedResults.users) {
-            throw new ErrorHandler(404, 'No users found');
-        }
+        if (!res.paginatedResults.users) throw new ErrorHandler(404, 'No users found');
 
         res.send(res.paginatedResults);
     } catch (error) {
@@ -43,9 +41,7 @@ module.exports.getMe = async (req, res, next) => {
 module.exports.searchUsers = async (req, res, next) => {
     const { search, school, role } = req.query;
 
-    if (!search) {
-        throw new ErrorHandler(400, 'No search params provided');
-    }
+    if (!search) throw new ErrorHandler(400, 'No search params provided');
 
     try {
         const searchFields = JSON.parse(search);
@@ -55,8 +51,8 @@ module.exports.searchUsers = async (req, res, next) => {
             return acc;
         }, {});
 
-        const users = await User.find({ 
-            ...searchableFields, 
+        const users = await User.find({
+            ...searchableFields,
             school,
             ...(role && { role })
         });
@@ -89,7 +85,7 @@ module.exports.createUser = async (req, res, next) => {
             schoolID = loggedInUser.school;
 
             // Add location to new user if created by a location admin
-            locationID = loggedInUser.location; 
+            locationID = loggedInUser.location;
         }
 
         // TODO: Create a parameter for this request (ex. withPassword) 
@@ -105,7 +101,7 @@ module.exports.createUser = async (req, res, next) => {
             ...(schoolID && { school: schoolID }),
             ...(locationID && { location: locationID })
         });
-        
+
         res.status(201).json(user);
     } catch (error) {
         next(error);
@@ -117,7 +113,7 @@ module.exports.createUser = async (req, res, next) => {
 // @access  Public
 module.exports.loginUser = async (req, res, next) => {
     const { phoneNumber, password } = req.body;
-    
+
     try {
         const user = await User.login(phoneNumber, password);
 
@@ -152,13 +148,7 @@ module.exports.updateUser = async (req, res, next) => {
     const user = req.user;
 
     try {
-        for (const property in dataToUpdate) {
-            if (possibleUpdates.includes(property)) {
-                user[property] = dataToUpdate[property];
-            } else {
-                throw new ErrorHandler(400, [{ field: property, message: `Property not accepted: ${property}` }]);
-            }
-        }
+        checkForUpdatableProperties(user, dataToUpdate, possibleUpdates);
 
         await user.save();
 
@@ -176,9 +166,7 @@ module.exports.deleteUser = async (req, res, next) => {
         // TODO: restrict who can delete users
         const user = await User.findByIdAndDelete(req.params.id);
 
-        if (!user) {
-            throw new ErrorHandler(404, 'No user found');
-        }
+        if (!user) throw new ErrorHandler(404, 'No user found');
 
         res.json(user);
     } catch (error) {

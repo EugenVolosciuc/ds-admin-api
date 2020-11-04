@@ -6,9 +6,7 @@ const { ErrorHandler } = require('../utils/errorHandler');
 // @access  Private
 module.exports.getSchoolLocations = (req, res, next) => {
     try {
-        if (!res.paginatedResults.schoollocations) {
-            throw new ErrorHandler(404, 'No school locations found');
-        }
+        if (!res.paginatedResults.schoollocations) throw new ErrorHandler(404, 'No school locations found');
 
         res.send(res.paginatedResults);
     } catch (error) {
@@ -22,9 +20,7 @@ module.exports.getSchoolLocations = (req, res, next) => {
 module.exports.searchSchoolLocations = async (req, res, next) => {
     const { search, school } = req.query;
 
-    if (!search) {
-        throw new ErrorHandler(400, 'No search params provided');
-    }
+    if (!search) throw new ErrorHandler(400, 'No search params provided');
 
     try {
         const searchFields = JSON.parse(search);
