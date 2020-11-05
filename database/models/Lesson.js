@@ -16,6 +16,11 @@ const lessonSchema = mongoose.Schema({
         ref: 'Vehicle',
         required: [true, 'Vehicle is required']
     },
+    school: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'School',
+        required: [true, 'School is required']
+    },
     start: {
         type: Date,
         required: [true, 'Lesson time is required']

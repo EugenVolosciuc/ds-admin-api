@@ -5,7 +5,7 @@ const checkForUpdatableProperties = require('../utils/updatablePropertyChecker')
 // @desc    Get schools
 // @route   GET /schools
 // @access  Private
-module.exports.getSchools = async (req, res) => {
+module.exports.getSchools = async (req, res, next) => {
     try {
         if (!res.paginatedResults.schools) throw new ErrorHandler(404, 'No schools found');
 
@@ -18,7 +18,7 @@ module.exports.getSchools = async (req, res) => {
 // @desc    Create school
 // @route   POST /schools
 // @access  Private
-module.exports.createSchool = async (req, res) => {
+module.exports.createSchool = async (req, res, next) => {
     const { name, country } = req.body;
 
     try {
@@ -33,7 +33,7 @@ module.exports.createSchool = async (req, res) => {
 // @desc    update school
 // @route   PATCH /schools/:id
 // @access  Private
-module.exports.updateSchool = async (req, res) => {
+module.exports.updateSchool = async (req, res, next) => {
     const possibleUpdates = Object.keys(School.schema.obj);
 
     const dataToUpdate = req.body;
@@ -57,7 +57,7 @@ module.exports.updateSchool = async (req, res) => {
 // @desc    Delete school
 // @route   DELETE /schools/:id
 // @access  Private
-module.exports.deleteSchool = async (req, res) => {
+module.exports.deleteSchool = async (req, res, next) => {
     try {
         // TODO: restrict who can delete school
         const school = await School.findByIdAndDelete(req.params.id);
