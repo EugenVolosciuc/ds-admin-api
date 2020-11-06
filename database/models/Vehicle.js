@@ -46,7 +46,6 @@ const vehicleSchema = mongoose.Schema({
     },
     status: {
         type: String,
-        required: [true, 'Vehicle status is required'],
         default: VEHICLE_STATUSES.IDLE.tag,
         enum: {
             values: validVehicleStatuses,
