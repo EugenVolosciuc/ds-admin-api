@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { getVehicles, createVehicle, updateVehicle, deleteVehicle } = require('../controllers/vehicleController');
+const { getVehicles, createVehicle, updateVehicle, deleteVehicle, searchVehicles } = require('../controllers/vehicleController');
 const Vehicle = require('../database/models/Vehicle');
 const { requireAuth } = require('../middleware/authMiddleware');
 const { requireSchool } = require('../middleware/schoolMiddleware');
@@ -14,6 +14,12 @@ router.get(
     requireAuth(),
     paginate(Vehicle, ['schoolLocation', 'instructor']),
     getVehicles
+);
+
+router.get(
+    '/search',
+    requireAuth(),
+    searchVehicles
 );
 
 router.post(

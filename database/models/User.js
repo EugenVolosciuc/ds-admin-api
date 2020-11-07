@@ -39,14 +39,18 @@ const userSchema = mongoose.Schema({
             message: `Valid user roles are ${validUserRoles.join(', ')}`
         }
     },
-    school: {
+    // TODO: comments under
+    school: { // SCHOOL_ADMIN, LOCATION_ADMIN, INSTRUCTOR, STUDENT
         type: mongoose.Schema.Types.ObjectId,
         ref: 'School'
     },
-    location: {
+    location: { // LOCATION_ADMIN, INSTRUCTOR, STUDENT
         type: mongoose.Schema.Types.ObjectId,
         ref: 'SchoolLocation'
-    }
+    },
+    // For students - number of program lessons already taken (e.g. 3/15),
+    // For students and instructors - assigned vehicle
+    // For students - assigned instructor
 }, { 
     timestamps: true
 });

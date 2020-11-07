@@ -20,7 +20,8 @@ const schoolSchema = mongoose.Schema({
     lessonDuration: {
         type: Number,
         default: 90
-    }
+    },
+    // Number of lessons it takes to finish school (a student can't request more program lessons if the limit is reached)
     // TODO: when pricing options will be defined (probably as a collection itself), I'll have to add the option in here so that I know how many locations a school can have
 }, {
     timestamps: true

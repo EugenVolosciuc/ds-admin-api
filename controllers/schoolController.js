@@ -15,6 +15,21 @@ module.exports.getSchools = async (req, res, next) => {
     }
 }
 
+// @desc    Get school
+// @route   GET /schools/:id
+// @access  Private
+module.exports.getSchool = async (req, res, next) => {
+    try {
+        const school = await School.findById(req.params.id).populate(['locations', 'admin']);
+
+        if (!school) throw new ErrorHandler(404, 'No school found');
+
+        res.json(school);
+    } catch (error) {
+        next(error);
+    }
+}
+
 // @desc    Create school
 // @route   POST /schools
 // @access  Private

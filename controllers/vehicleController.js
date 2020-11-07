@@ -16,6 +16,34 @@ module.exports.getVehicles = (req, res, next) => {
     }
 }
 
+// @desc    Search vehicles
+// @route   GET /vehicles/search
+// @access  Private
+module.exports.searchVehicles = async (req, res, next) => {
+    const { search, school, location } = req.query;
+
+    if (!search) throw new ErrorHandler(400, 'No search params provided');
+
+    try {
+        const searchFields = JSON.parse(search);
+
+        const searchableFields = Object.entries(searchFields).reduce((acc, currentValue) => {
+            acc[currentValue[0]] = new RegExp(currentValue[1], "i");
+            return acc;
+        }, {});
+
+        const vehicles = await Vehicle.find({
+            ...searchableFields,
+            school,
+            ...(location && { schoolLocation: location })
+        });
+
+        res.json(vehicles);
+    } catch (error) {
+        next(error);
+    }
+}
+
 // @desc    Create vehicle
 // @route   POST /vehicles
 // @access  Private

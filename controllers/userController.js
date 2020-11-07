@@ -54,7 +54,11 @@ module.exports.searchUsers = async (req, res, next) => {
         const users = await User.find({
             ...searchableFields,
             school,
-            ...(role && { role })
+            ...(role && {
+                role: Array.isArray(role)
+                    ? { $in: role }
+                    : role
+            })
         });
 
         res.json(users);
