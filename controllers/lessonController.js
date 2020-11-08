@@ -12,7 +12,6 @@ module.exports.getLessons = async (req, res, next) => {
 
     const user = req.user;
 
-    // TODO: Check for the user's role to know what lessons to return exactly
     try {
         if (!startAt || !endAt) throw new ErrorHandler(400, 'Please provide a period to search for lessons');
 
@@ -36,7 +35,9 @@ module.exports.getLessons = async (req, res, next) => {
                     $gte: new Date(startAt),
                     $lte: new Date(endAt)
                 },
-                location
+                location,
+                ...(user.role === USER_ROLES.INSTRUCTOR.tag && { instructor: user._id }),
+                ...(user.role === USER_ROLES.STUDENT.tag && { student: user._id })
             })
             .populate(getFieldsToPopulate());
 

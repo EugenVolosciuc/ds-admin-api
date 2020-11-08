@@ -10,8 +10,8 @@
     "delete:users": "node database/seeder delete-users",
     "import:schools": "node database/seeder import-schools",
     "delete:schools": "node database/seeder delete-schools",
-    "import:school-locations": "node database/seeder import-school-locations",
-    "delete:school-locations": "node database/seeder delete-school-locations",
+    "import:locations": "node database/seeder import-locations",
+    "delete:locations": "node database/seeder delete-locations",
     "import:vehicles": "node database/seeder import-vehicles",
     "delete:vehicles": "node database/seeder delete-vehicles"
   },

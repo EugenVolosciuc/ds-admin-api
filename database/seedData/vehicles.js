@@ -12,7 +12,7 @@ const getVehicles = async () => {
             brand: 'Skoda',
             model: 'Fabia',
             modelYear: new Date('2008'),
-            licensePlate: 'IS 29 PTR',
+            licensePlate: 'SB 14 BSZ',
             school: schoolIDs.autoIordache,
             category: VEHICLE_CATEGORIES.B.tag,
             transmission: TRANSMISSION_TYPES.MANUAL.tag

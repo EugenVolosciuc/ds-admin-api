@@ -73,7 +73,7 @@ userSchema.methods.toJSON = function () {
 
 // Login method
 userSchema.statics.login = async function(phoneNumber, password) {
-    const user = await this.findOne({ phoneNumber });
+    const user = await this.findOne({ phoneNumber }).populate(['school', 'location']);
 
     if (user) {
         const auth = await bcrypt.compare(password, user.password);

@@ -150,10 +150,10 @@ const mainSeedProcess = async () => {
         case 'delete-schools':
             await deleteSchools();
             break;
-        case 'import-school-locations':
+        case 'import-locations':
             await importLocations();
             break;
-        case 'delete-school-locations':
+        case 'delete-locations':
             await deleteLocations();
             break;
         case 'import-vehicles':

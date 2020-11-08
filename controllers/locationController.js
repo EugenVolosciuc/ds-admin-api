@@ -2,7 +2,7 @@ const Location = require('../database/models/Location');
 const { ErrorHandler } = require('../utils/errorHandler');
 
 // @desc    Get school locations
-// @route   GET /school-locations
+// @route   GET /locations
 // @access  Private
 module.exports.getLocations = (req, res, next) => {
     try {
@@ -15,7 +15,7 @@ module.exports.getLocations = (req, res, next) => {
 }
 
 // @desc    Search school locations
-// @route   GET /school-locations/search
+// @route   GET /locations/search
 // @access  Private
 module.exports.searchLocations = async (req, res, next) => {
     const { search, school } = req.query;
