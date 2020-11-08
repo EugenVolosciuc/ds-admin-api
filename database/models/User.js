@@ -40,17 +40,23 @@ const userSchema = mongoose.Schema({
         }
     },
     // TODO: comments under
-    school: { // SCHOOL_ADMIN, LOCATION_ADMIN, INSTRUCTOR, STUDENT
+    school: { // For SCHOOL_ADMIN, LOCATION_ADMIN, INSTRUCTOR, STUDENT
         type: mongoose.Schema.Types.ObjectId,
         ref: 'School'
     },
-    location: { // LOCATION_ADMIN, INSTRUCTOR, STUDENT
+    location: { // For LOCATION_ADMIN, INSTRUCTOR, STUDENT
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'SchoolLocation'
+        ref: 'Location'
     },
+    vehicle: { // For INSTRUCTOR, STUDENT
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Vehicle'
+    },
+    instructor: { // For STUDENT
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }
     // For students - number of program lessons already taken (e.g. 3/15),
-    // For students and instructors - assigned vehicle
-    // For students - assigned instructor
 }, { 
     timestamps: true
 });

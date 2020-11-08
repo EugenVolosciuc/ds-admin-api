@@ -28,9 +28,9 @@ const vehicleSchema = mongoose.Schema({
         ref: 'School',
         required: [true, 'School is required']
     },
-    schoolLocation: {
+    location: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'SchoolLocation',
+        ref: 'Location',
     },
     instructor: {
         type: mongoose.Schema.Types.ObjectId,

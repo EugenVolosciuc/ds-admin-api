@@ -12,7 +12,9 @@ module.exports.requireAuth = roles => {
         try {
             if (token) {
                 const decoded = jwt.verify(token, process.env.JWT_SECRET);
-                const user = await User.findOne({ _id: decoded.id });
+                const user = await User
+                    .findOne({ _id: decoded.id })
+                    .populate(['school', 'location']);
 
                 if (!user) throw new ErrorHandler(401, 'Please authenticate');
 

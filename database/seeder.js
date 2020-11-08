@@ -3,7 +3,7 @@ require('dotenv').config();
 const User = require('./models/User');
 const School = require('./models/School');
 const Vehicle = require('./models/Vehicle');
-const SchoolLocation = require('./models/SchoolLocation');
+const Location = require('./models/Location');
 const connectToDB = require('./connect');
 
 const importUsers = async () => {
@@ -63,31 +63,31 @@ const deleteSchools = async () => {
     }
 }
 
-const importSchoolLocations = async () => {
+const importLocations = async () => {
     try {
-        await deleteSchoolLocations();
+        await deleteLocations();
 
-        const getSchoolLocations = require('./seedData/schoolLocations');
-        const schoolLocations = await getSchoolLocations();
+        const getLocations = require('./seedData/locations');
+        const locations = await getLocations();
 
-        console.log(`Importing ${schoolLocations.length} school locations...`);
-        await SchoolLocation.create(schoolLocations);
+        console.log(`Importing ${locations.length} locations...`);
+        await Location.create(locations);
 
-        console.log("School locations imported successfuly!");
+        console.log("Locations imported successfuly!");
     } catch (error) {
-        console.error("An error occured while importing school locations: ", error);
+        console.error("An error occured while importing locations: ", error);
         process.exit(1);
     }
 }
 
-const deleteSchoolLocations = async () => {
+const deleteLocations = async () => {
     try {
-        console.log("Deleting school locations...");
-        await SchoolLocation.deleteMany();
+        console.log("Deleting locations...");
+        await Location.deleteMany();
 
-        console.log("School locations deleted successfuly!");
+        console.log("Locations deleted successfuly!");
     } catch (error) {
-        console.error("An error occured while deleting school locations: ", error);
+        console.error("An error occured while deleting locations: ", error);
         process.exit(1);
     }
 }
@@ -99,7 +99,7 @@ const importVehicles = async () => {
         const getVehicles = require('./seedData/vehicles');
         const vehicles = await getVehicles();
 
-        console.log(`Importing ${vehicles.length} school locations...`);
+        console.log(`Importing ${vehicles.length} vehicles...`);
         await Vehicle.create(vehicles);
 
         console.log("Vehicles imported successfuly!");
@@ -121,10 +121,23 @@ const deleteVehicles = async () => {
     }
 }
 
+const importData = async () => {
+    await importSchools();
+    await importLocations();
+    await importVehicles();
+    await importUsers();
+
+    console.log("-----")
+    console.log("Imported all data successfully!");
+}
+
 const mainSeedProcess = async () => {
     await connectToDB();
 
     switch (process.argv[2]) {
+        case 'import-data':
+            await importData();
+            break;
         case 'import-users':
             await importUsers();
             break;
@@ -138,10 +151,10 @@ const mainSeedProcess = async () => {
             await deleteSchools();
             break;
         case 'import-school-locations':
-            await importSchoolLocations();
+            await importLocations();
             break;
         case 'delete-school-locations':
-            await deleteSchoolLocations();
+            await deleteLocations();
             break;
         case 'import-vehicles':
             await importVehicles();

@@ -12,7 +12,7 @@ const router = express.Router();
 router.get(
     '/',
     requireAuth(),
-    paginate(Vehicle, ['schoolLocation', 'instructor']),
+    paginate(Vehicle, ['location', 'instructor']),
     getVehicles
 );
 

@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
+    "import:data": "node database/seeder import-data",
     "import:users": "node database/seeder import-users",
     "delete:users": "node database/seeder delete-users",
     "import:schools": "node database/seeder import-schools",

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const School = require('./School');
 
-const schoolLocationSchema = mongoose.Schema({
+const locationSchema = mongoose.Schema({
     name: {
         type: String,
         required: [true, 'Name is required']
@@ -11,7 +11,7 @@ const schoolLocationSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'School',
         required: [true, 'School is required'],
-        set: function(school) {
+        set: function (school) {
             this._previousSchool = this.school;
             return school
         }
@@ -29,14 +29,14 @@ const schoolLocationSchema = mongoose.Schema({
     timestamps: true
 });
 
-schoolLocationSchema.pre('save', async function (next) {
+locationSchema.pre('save', async function (next) {
     // Update locations field in school
     if (this.isModified('school')) {
         try {
             const school = await School.findById(this.school);
 
-            let filteredLocations = school.locations
-            if (school.locations.includes(this._previousSchool)) filteredLocations = filteredLocations.filter(location => location !== this._previousSchool)
+            let filteredLocations = school.locations;
+            if (school.locations.includes(this._previousSchool)) filteredLocations = filteredLocations.filter(location => location !== this._previousSchool);
 
             school.locations = [...filteredLocations, this._id];
 
@@ -49,6 +49,16 @@ schoolLocationSchema.pre('save', async function (next) {
     next();
 });
 
-const SchoolLocation = mongoose.model('SchoolLocation', schoolLocationSchema);
+locationSchema.post('remove', async function (next) {
+    try {
+        await School.updateOne({ _id: this.school }, { $pull: { locations: this._id } });
 
-module.exports = SchoolLocation;
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
+
+const Location = mongoose.model('Location', locationSchema);
+
+module.exports = Location;

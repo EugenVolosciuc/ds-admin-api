@@ -1,12 +1,12 @@
-const SchoolLocation = require('../database/models/SchoolLocation');
+const Location = require('../database/models/Location');
 const { ErrorHandler } = require('../utils/errorHandler');
 
 // @desc    Get school locations
 // @route   GET /school-locations
 // @access  Private
-module.exports.getSchoolLocations = (req, res, next) => {
+module.exports.getLocations = (req, res, next) => {
     try {
-        if (!res.paginatedResults.schoollocations) throw new ErrorHandler(404, 'No school locations found');
+        if (!res.paginatedResults.locations) throw new ErrorHandler(404, 'No school locations found');
 
         res.send(res.paginatedResults);
     } catch (error) {
@@ -17,7 +17,7 @@ module.exports.getSchoolLocations = (req, res, next) => {
 // @desc    Search school locations
 // @route   GET /school-locations/search
 // @access  Private
-module.exports.searchSchoolLocations = async (req, res, next) => {
+module.exports.searchLocations = async (req, res, next) => {
     const { search, school } = req.query;
 
     if (!search) throw new ErrorHandler(400, 'No search params provided');
@@ -30,9 +30,9 @@ module.exports.searchSchoolLocations = async (req, res, next) => {
             return acc;
         }, {});
 
-        const schoolLocations = await SchoolLocation.find({ ...searchableFields, school });
+        const locations = await Location.find({ ...searchableFields, school });
 
-        res.json(schoolLocations);
+        res.json(locations);
     } catch (error) {
         next(error);
     }

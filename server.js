@@ -20,7 +20,7 @@ connectToDB();
 app.use('/users', require('./routes/userRoutes'));
 app.use('/schools', require('./routes/schoolRoutes'));
 app.use('/vehicles', require('./routes/vehicleRoutes'));
-app.use('/school-locations', require('./routes/schoolLocationRoutes'));
+app.use('/locations', require('./routes/locationRoutes'));
 app.use('/lessons', require('./routes/lessonRoutes'));
 
 // Error handling

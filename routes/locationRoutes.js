@@ -1,7 +1,7 @@
 const express = require('express');
 
-const { getSchoolLocations, searchSchoolLocations } = require('../controllers/schoolLocationController');
-const SchoolLocation = require('../database/models/SchoolLocation');
+const { getLocations, searchLocations } = require('../controllers/locationController');
+const Location = require('../database/models/Location');
 const { requireAuth } = require('../middleware/authMiddleware');
 const { paginate } = require('../middleware/paginationMiddleware');
 const { USER_ROLES } = require('../constants');
@@ -14,8 +14,8 @@ router.get(
         USER_ROLES.SUPER_ADMIN.tag,
         USER_ROLES.SCHOOL_ADMIN.tag
     ]),
-    paginate(SchoolLocation),
-    getSchoolLocations
+    paginate(Location),
+    getLocations
 );
 
 router.get(
@@ -24,7 +24,7 @@ router.get(
         USER_ROLES.SUPER_ADMIN.tag,
         USER_ROLES.SCHOOL_ADMIN.tag
     ]),
-    searchSchoolLocations
+    searchLocations
 );
 
 module.exports = router;

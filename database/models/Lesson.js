@@ -18,8 +18,8 @@ const lessonSchema = mongoose.Schema({
     },
     location: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'SchoolLocation',
-        required: [true, 'School location is required']
+        ref: 'Location',
+        required: [true, 'Location is required']
     },
     start: {
         type: Date,

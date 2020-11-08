@@ -35,7 +35,7 @@ module.exports.searchVehicles = async (req, res, next) => {
         const vehicles = await Vehicle.find({
             ...searchableFields,
             school,
-            ...(location && { schoolLocation: location })
+            ...(location && { location })
         });
 
         res.json(vehicles);

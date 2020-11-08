@@ -15,7 +15,7 @@ const schoolSchema = mongoose.Schema({
     },
     locations: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'SchoolLocation'
+        ref: 'Location'
     }],
     lessonDuration: {
         type: Number,

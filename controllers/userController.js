@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const User = require('../database/models/User');
 const { ErrorHandler } = require('../utils/errorHandler');
+const checkForUpdatableProperties = require('../utils/updatablePropertyChecker');
 
 const maxAge = 3 * 24 * 60 * 60; // days, hours, minutes, seconds
 
@@ -142,6 +143,26 @@ module.exports.logoutUser = (req, res, next) => {
     }
 }
 
+// @desc    Update me
+// @route   PATCH /users/me
+// @access  Private
+module.exports.updateMe = async (req, res, next) => {
+    const possibleUpdates = Object.keys(User.schema.obj);
+
+    const dataToUpdate = req.body;
+    const user = req.user;
+
+    try {
+        checkForUpdatableProperties(user, dataToUpdate, possibleUpdates);
+
+        await user.save();
+
+        res.send(user);
+    } catch (error) {
+        next(error);
+    }
+}
+
 // @desc    Update user
 // @route   PATCH /users/:id
 // @access  Private
@@ -149,9 +170,13 @@ module.exports.updateUser = async (req, res, next) => {
     const possibleUpdates = Object.keys(User.schema.obj);
 
     const dataToUpdate = req.body;
-    const user = req.user;
+    const { id } = req.params;
 
     try {
+        const user = await User.findById(id);
+
+        if (!user) throw new ErrorHandler(404, 'User not found');
+
         checkForUpdatableProperties(user, dataToUpdate, possibleUpdates);
 
         await user.save();

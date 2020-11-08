@@ -3,7 +3,7 @@ const faker = require('faker');
 const getSchoolIDs = require('../../utils/getSchoolIDs');
 // const getRandomInt = require('../../utils/getRandomInt');
 
-const getSchoolLocations = async () => {
+const getLocations = async () => {
     const schoolIDs = await getSchoolIDs();
 
     return [
@@ -28,4 +28,4 @@ const getSchoolLocations = async () => {
     ]
 }
 
-module.exports = getSchoolLocations;
+module.exports = getLocations;
