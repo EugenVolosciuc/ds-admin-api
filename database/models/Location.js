@@ -24,6 +24,10 @@ const locationSchema = mongoose.Schema({
         type: String,
         required: [true, 'Address is required']
     },
+    admin: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     // TODO: add working hours
 }, {
     timestamps: true

@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 
 const { USER_ROLES } = require('../../constants');
 const School = require('./School');
+const Location = require('./Location');
 const { ErrorHandler } = require('../../utils/errorHandler');
 
 const validUserRoles = Object.keys(USER_ROLES);
@@ -100,6 +101,19 @@ userSchema.pre('save', async function (next) {
             school.admin = this._id;
 
             await school.save();
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    // Update location admin field in location
+    if (this.isModified('location') && this.role === USER_ROLES.LOCATION_ADMIN.tag) {
+        try {
+            const location = await Location.findById(this.location);
+
+            location.admin = this._id;
+
+            await location.save();
         } catch (error) {
             next(error);
         }

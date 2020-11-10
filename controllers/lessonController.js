@@ -1,3 +1,5 @@
+const isEmpty = require('lodash/isEmpty');
+
 const Lesson = require('../database/models/Lesson');
 const { ErrorHandler } = require('../utils/errorHandler');
 const { USER_ROLES } = require('../constants');
@@ -49,19 +51,53 @@ module.exports.getLessons = async (req, res, next) => {
 
 module.exports.createLesson = async (req, res, next) => {
     const { vehicle, student, instructor, start, end, location } = req.body;
-    try {
-        // NOTE: 
-        // Things to consider: 
-        // 1. Before creating a lesson, we should check if there is already a lesson in the set time, if the car and instructor are available and if the student doesn't have already a set lesson in the selected timeslot
 
-        const lesson = await Lesson.create({
-            vehicle,
-            location: location || req.user.location,
-            student: student || req.user._id,
-            instructor: instructor || req.user._id,
-            start: new Date(start),
-            end: new Date(end)
-        });
+    const user = req.user;
+    const isNotStudent = user.role !== USER_ROLES.STUDENT.tag;
+    const isNotInstructor = user.role !== USER_ROLES.INSTRUCTOR.tag;
+
+    try {
+         // Check student, vehicle and instructor availability
+        const lessonsInProvidedPeriod = await Lesson.find({
+            start: {
+                $gte: new Date(start),
+                $lte: new Date(end)
+            },
+            location
+        })
+
+        let lesson;
+        if (!isEmpty(lessonsInProvidedPeriod)) {
+            const errors = [];
+            let iterator = 0;
+
+            // errors.length < 4                                Errors length equal 3 when student, vehicle and instructor errors where added
+            // iterator < lessonsInProvidedPeriod.length        Iterate through every lesson in the provided period
+            while (errors.length < 4 && iterator < lessonsInProvidedPeriod.length) {
+                // Check if student is available (only if logged in user is not a student)
+                if (isNotStudent && lessonsInProvidedPeriod[iterator].student.toString() === student) errors.push({ field: 'student', message: 'This student already has a scheduled lesson in this time period' })
+
+                // Check if instructor is available (only if logged in user is not an instructor)
+                if (isNotInstructor && lessonsInProvidedPeriod[iterator].instructor.toString() === instructor) errors.push({ field: 'instructor', message: 'This instructor already has a scheduled lesson in this time period' })
+
+                // Check if vehicle is available
+                if (lessonsInProvidedPeriod[iterator].vehicle.toString() === vehicle) errors.push({ field: 'vehicle', message: 'This vehicle is scheduled for another lesson in this time period' })
+
+                iterator++;
+            }
+
+            throw new ErrorHandler(400, errors);
+        } else {
+            // Create lesson
+            lesson = await Lesson.create({
+                vehicle,
+                location: location || req.user.location,
+                student: student || req.user._id,
+                instructor: instructor || req.user._id,
+                start: new Date(start),
+                end: new Date(end)
+            });
+        }
 
         res.json(lesson);
     } catch (error) {
