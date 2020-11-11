@@ -22,6 +22,7 @@ app.use('/schools', require('./routes/schoolRoutes'));
 app.use('/vehicles', require('./routes/vehicleRoutes'));
 app.use('/locations', require('./routes/locationRoutes'));
 app.use('/lessons', require('./routes/lessonRoutes'));
+app.use('/lesson-requests', require('./routes/lessonRequestRoutes'));
 
 // Error handling
 app.use((err, req, res, next) => {
