@@ -29,7 +29,11 @@ const lessonRequestSchema = mongoose.Schema({
         type: Date,
         required: [true, 'Lesson end time is required']
     },
-    rejectionReason: { type: String }
+    rejectionReason: { type: String },
+    sawRejectionReason: {
+        type: Boolean,
+        default: false
+    }
 }, {
     timestamps: true
 });

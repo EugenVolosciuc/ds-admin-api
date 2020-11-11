@@ -14,6 +14,12 @@ const getLocations = async () => {
             address: faker.address.streetAddress()
         },
         {
+            name: 'Auto Iordache Bacau',
+            school: schoolIDs.autoIordache,
+            city: 'Bacau',
+            address: faker.address.streetAddress()
+        },
+        {
             name: 'AutoFany Iasi',
             school: schoolIDs.autoFany,
             city: 'Iasi',
