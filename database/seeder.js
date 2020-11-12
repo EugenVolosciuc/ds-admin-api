@@ -72,7 +72,13 @@ const importLocations = async () => {
         const locations = await getLocations();
 
         console.log(`Importing ${locations.length} locations...`);
-        await Location.create(locations);
+
+        // https://advancedweb.hu/how-to-use-async-functions-with-array-map-in-javascript/
+        await locations.reduce(async (memo, location) => {
+            const results = await memo;
+            await Location.create(location);
+            return [...results, location];
+        }, []);
 
         console.log("Locations imported successfuly!");
     } catch (error) {
