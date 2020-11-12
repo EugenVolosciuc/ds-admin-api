@@ -102,6 +102,15 @@ const getUsers = async () => {
             role: USER_ROLES.SCHOOL_ADMIN.tag,
             school: schoolIDs.autoIordache
         },
+        {
+            firstName: 'Andrei',
+            lastName: 'Andriescu',
+            phoneNumber: '0767654321',
+            email: 'andriescu.andrei@gmail.com',
+            password: 'password',
+            role: USER_ROLES.SCHOOL_ADMIN.tag,
+            school: schoolIDs.autoFany
+        },
         ...fakeUsers
     ]
 }

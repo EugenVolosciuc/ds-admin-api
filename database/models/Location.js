@@ -42,9 +42,13 @@ locationSchema.pre('save', async function (next) {
             let filteredLocations = school.locations;
             if (school.locations.includes(this._previousSchool)) filteredLocations = filteredLocations.filter(location => location !== this._previousSchool);
 
-            school.locations = [...filteredLocations, this._id];
+            const schoolObject = school.toObject();
+            delete schoolObject.__v; // to resolve version conflict when seeding locations
 
-            await school.save();
+            const versionlessSchool = School.hydrate(schoolObject);
+            versionlessSchool.locations = [...filteredLocations, this._id];
+
+            await versionlessSchool.save();
         } catch (error) {
             next(error);
         }

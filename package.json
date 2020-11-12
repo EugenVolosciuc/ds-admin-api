@@ -13,7 +13,9 @@
     "import:locations": "node database/seeder import-locations",
     "delete:locations": "node database/seeder delete-locations",
     "import:vehicles": "node database/seeder import-vehicles",
-    "delete:vehicles": "node database/seeder delete-vehicles"
+    "delete:vehicles": "node database/seeder delete-vehicles",
+    "import:lessons": "node database/seeder import-lessons",
+    "delete:lessons": "node database/seeder delete-lessons"
   },
   "author": "Eugen Volosciuc",
   "license": "ISC",

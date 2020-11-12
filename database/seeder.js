@@ -4,6 +4,7 @@ const User = require('./models/User');
 const School = require('./models/School');
 const Vehicle = require('./models/Vehicle');
 const Location = require('./models/Location');
+const Lesson = require('./models/Lesson');
 const connectToDB = require('./connect');
 
 const importUsers = async () => {
@@ -121,11 +122,45 @@ const deleteVehicles = async () => {
     }
 }
 
+const importLessons = async () => {
+    try {
+        await deleteLessons();
+
+        const getLessons = require('./seedData/lessons');
+        const lessons = await getLessons();
+
+        console.log(`Importing ${lessons.length} lessons...`);
+        await Lesson.create(lessons);
+
+        console.log("Lessons imported successfuly!");
+    } catch (error) {
+        console.error("An error occured while importing lessons: ", error);
+        process.exit(1);
+    }
+}
+
+const deleteLessons = async () => {
+    try {
+        console.log("Deleting lessons...");
+        await Lesson.deleteMany();
+
+        console.log("Lessons deleted successfuly!");
+    } catch (error) {
+        console.error("An error occured while deleting lessons: ", error);
+        process.exit(1);
+    }
+}
+
 const importData = async () => {
     await importSchools();
+    console.log("-")
     await importLocations();
+    console.log("-")
     await importVehicles();
+    console.log("-")
     await importUsers();
+    console.log("-")
+    await importLessons();
 
     console.log("-----")
     console.log("Imported all data successfully!");
@@ -161,6 +196,12 @@ const mainSeedProcess = async () => {
             break;
         case 'delete-vehicles':
             await deleteVehicles();
+            break;
+        case 'import-lessons':
+            await importLessons();
+            break;
+        case 'delete-lessons':
+            await deleteLessons();
             break;
         default:
             console.log("Please provide a valid argument")
