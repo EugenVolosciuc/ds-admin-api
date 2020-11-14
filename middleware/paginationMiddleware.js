@@ -1,5 +1,7 @@
 const { ErrorHandler } = require('../utils/errorHandler');
 
+const existCheckingFields = ['rejectionReason'];
+
 // Populated fields (array of fields of collection strings that should be populated)
 module.exports.paginate = (model, populatedFields) => {
     return async (req, res, next) => {
@@ -8,6 +10,16 @@ module.exports.paginate = (model, populatedFields) => {
             const perPage = parseInt(req.query.perPage) || 15;
             const sortBy = req.query.sortBy ? JSON.parse(req.query.sortBy) : { createdAt: 'descending' };
             const filters = req.query.filters ? JSON.parse(req.query.filters) : {};
+
+            existCheckingFields.forEach(field => {
+                if (field in filters) {
+                    const valueExistsInField = filters[field];
+
+                    valueExistsInField
+                        ? filters[field] = { $exists: false }
+                        : delete filters[field]
+                }
+            });
 
             const startIndex = (page - 1) * perPage;
             const endIndex = page * perPage;
