@@ -1,6 +1,13 @@
+const dayjs = require('dayjs');
+const customParseFormat = require('dayjs/plugin/customParseFormat');
+
 const Vehicle = require('../database/models/Vehicle');
+const Lesson = require('../database/models/Lesson');
 const { ErrorHandler } = require('../utils/errorHandler');
 const checkForUpdatableProperties = require('../utils/updatablePropertyChecker');
+const VEHICLE_STATUSES = require('../constants/VEHICLE_STATUSES');
+
+dayjs.extend(customParseFormat);
 
 // @desc    Get vehicles
 // @route   GET /vehicles
@@ -8,7 +15,6 @@ const checkForUpdatableProperties = require('../utils/updatablePropertyChecker')
 module.exports.getVehicles = (req, res, next) => {
     try {
         if (!res.paginatedResults.vehicles) throw new ErrorHandler(404, 'No vehicles found');
-
 
         res.send(res.paginatedResults);
     } catch (error) {
@@ -20,7 +26,7 @@ module.exports.getVehicles = (req, res, next) => {
 // @route   GET /vehicles/search
 // @access  Private
 module.exports.searchVehicles = async (req, res, next) => {
-    const { search, school, location } = req.query;
+    const { search, school, location, status } = req.query;
 
     if (!search) throw new ErrorHandler(400, 'No search params provided');
 
@@ -35,7 +41,8 @@ module.exports.searchVehicles = async (req, res, next) => {
         const vehicles = await Vehicle.find({
             ...searchableFields,
             school,
-            ...(location && { location })
+            ...(location && { location }),
+            ...(status && { status })
         });
 
         res.json(vehicles);
@@ -79,6 +86,45 @@ module.exports.updateVehicle = async (req, res, next) => {
         if (!vehicle) throw new ErrorHandler(404, 'No vehicle found');
 
         checkForUpdatableProperties(vehicle, dataToUpdate, possibleUpdates);
+
+        await vehicle.save();
+
+        res.send(vehicle);
+    } catch (error) {
+        next(error);
+    }
+}
+
+// @desc    Set vehicle usage
+// @route   PATCH /vehicles/:id/usage
+// @access  Private
+module.exports.setVehicleUsage = async (req, res, next) => {
+    const { status, start, end } = req.body;
+
+    try {
+        const vehicle = await Vehicle.findById(req.params.id);
+
+        if (!vehicle) throw new ErrorHandler(404, 'No vehicle found');
+
+        // Change the vehicle status
+        if (!start) {
+            vehicle.status = status;
+        } else {
+            // TODO: if period, change the status to INOPERATIVE when period starts and back to IDLE when the period expires (CRON JOB?)
+        }
+
+        // Delete all lessons with this vehicle
+        if (status === VEHICLE_STATUSES.INOPERATIVE.tag) {
+            await Lesson
+                .find({
+                    vehicle: vehicle._id,
+                    start: {
+                        $gte: start ? dayjs(start, 'YYYY-MM-DD HH').toDate() : new Date(),
+                        ...(end && { $lte: dayjs(end, 'YYYY-MM-DD HH').toDate() })
+                    }
+                })
+                .remove();
+        }
 
         await vehicle.save();
 

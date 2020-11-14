@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { getVehicles, createVehicle, updateVehicle, deleteVehicle, searchVehicles } = require('../controllers/vehicleController');
+const { getVehicles, createVehicle, updateVehicle, deleteVehicle, searchVehicles, setVehicleUsage } = require('../controllers/vehicleController');
 const Vehicle = require('../database/models/Vehicle');
 const { requireAuth } = require('../middleware/authMiddleware');
 const { requireSchool } = require('../middleware/schoolMiddleware');
@@ -40,6 +40,16 @@ router.patch(
     ]),
     requireSchool,
     updateVehicle
+)
+
+router.patch(
+    '/:id/usage',
+    requireAuth([
+        USER_ROLES.SCHOOL_ADMIN.tag,
+        USER_ROLES.LOCATION_ADMIN.tag
+    ]),
+    requireSchool,
+    setVehicleUsage
 )
 
 router.delete('/:id', requireAuth(), deleteVehicle);

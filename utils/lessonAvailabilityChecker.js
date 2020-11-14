@@ -15,7 +15,7 @@ const lessonAvailabilityChecker = async (user, requestBody, lessonID) => {
             $lte: new Date(requestBody.end)
         },
         location: requestBody.location
-    })
+    });
 
     if (!isEmpty(lessonsInProvidedPeriod)) {
         const errors = [];
