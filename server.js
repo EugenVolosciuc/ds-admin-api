@@ -12,7 +12,7 @@ const PORT = process.env.port || 3001;
 require('dotenv').config();
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ credentials: true, origin: process.env.FRONTEND_DEV_LINK })); // TODO: add prod link when will launch product
+app.use(cors({ credentials: true, origin: process.env.FRONTEND_DEV_LINK })); // TODO: add production link when will launch product
 
 connectToDB();
 
@@ -23,6 +23,7 @@ app.use('/vehicles', require('./routes/vehicleRoutes'));
 app.use('/locations', require('./routes/locationRoutes'));
 app.use('/lessons', require('./routes/lessonRoutes'));
 app.use('/lesson-requests', require('./routes/lessonRequestRoutes'));
+app.use('/cron', require('./routes/cronRoutes'));
 
 // Error handling
 app.use((err, req, res, next) => {
