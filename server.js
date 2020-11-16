@@ -16,6 +16,9 @@ app.use(cors({ credentials: true, origin: process.env.FRONTEND_DEV_LINK })); // 
 
 connectToDB();
 
+// Instantiate cron jobs
+require('./cron/init')();
+
 // Routes
 app.use('/users', require('./routes/userRoutes'));
 app.use('/schools', require('./routes/schoolRoutes'));
