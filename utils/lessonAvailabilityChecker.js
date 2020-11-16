@@ -25,7 +25,8 @@ const lessonAvailabilityChecker = async (user, requestBody, lessonID) => {
         // iterator < lessonsInProvidedPeriod.length        Iterate through every lesson in the provided period
         while (errors.length < 4 && iterator < lessonsInProvidedPeriod.length) {
             // is an update request
-            if (lessonID && lessonsInProvidedPeriod[iterator]._id === lessonID) {
+
+            if (lessonID && lessonsInProvidedPeriod[iterator]._id.toString() === lessonID) {
                 iterator++;
                 continue;
             }
@@ -42,7 +43,7 @@ const lessonAvailabilityChecker = async (user, requestBody, lessonID) => {
             iterator++;
         }
 
-        throw new ErrorHandler(400, errors);
+        if (!isEmpty(errors)) throw new ErrorHandler(400, errors);
     }
 }
 

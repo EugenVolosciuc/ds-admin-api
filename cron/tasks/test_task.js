@@ -6,6 +6,7 @@ const test_task = cron.schedule('* * * * * *', () => {
     scheduled: false
 });
 
+test_task.runAtStartup = false;
 test_task.name = 'test_task';
 
 module.exports = test_task;
