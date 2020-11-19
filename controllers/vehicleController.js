@@ -2,6 +2,7 @@ const dayjs = require('dayjs');
 const customParseFormat = require('dayjs/plugin/customParseFormat');
 
 const Vehicle = require('../database/models/Vehicle');
+const CronJob = require('../database/models/CronJob');
 const Lesson = require('../database/models/Lesson');
 const { ErrorHandler } = require('../utils/errorHandler');
 const checkForUpdatableProperties = require('../utils/updatablePropertyChecker');
@@ -13,6 +14,7 @@ dayjs.extend(customParseFormat);
 // @route   GET /vehicles
 // @access  Private
 module.exports.getVehicles = (req, res, next) => {
+
     try {
         if (!res.paginatedResults.vehicles) throw new ErrorHandler(404, 'No vehicles found');
 
@@ -100,6 +102,7 @@ module.exports.updateVehicle = async (req, res, next) => {
 // @access  Private
 module.exports.setVehicleUsage = async (req, res, next) => {
     const { status, start, end } = req.body;
+    const { utcOffset } = req.query;
 
     try {
         const vehicle = await Vehicle.findById(req.params.id);
@@ -110,7 +113,32 @@ module.exports.setVehicleUsage = async (req, res, next) => {
         if (!start) {
             vehicle.status = status;
         } else {
-            // TODO: if period, change the status to INOPERATIVE when period starts and back to IDLE when the period expires (CRON JOB?)
+            const inoperativeParameters = new Map();
+            inoperativeParameters.set('status', VEHICLE_STATUSES.INOPERATIVE.tag);
+            inoperativeParameters.set('vehicle', req.params.id);
+
+            const operativeParameters = new Map();
+            operativeParameters.set('status', VEHICLE_STATUSES.IDLE.tag);
+            operativeParameters.set('vehicle', req.params.id);
+
+            // "start" cron job
+            if (!dayjs(start).isBefore(dayjs())) { // If start param is later before present time
+                console.log("timeOfExecution when setting vehicle usage!!!", dayjs(start, 'YYYY-MM-DD HH:mm').toDate())
+                await CronJob.create({
+                    taskName: 'change_vehicle_status',
+                    timeOfExecution: dayjs(start, 'YYYY-MM-DD HH:mm').toDate(),
+                    utcOffset: Number(utcOffset),
+                    parameters: status === VEHICLE_STATUSES.INOPERATIVE.tag ? inoperativeParameters : operativeParameters
+                });
+            }
+
+            // "end" cron job
+            await CronJob.create({
+                taskName: 'change_vehicle_status',
+                timeOfExecution: dayjs(end, 'YYYY-MM-DD HH:mm').toDate(),
+                utcOffset: Number(utcOffset),
+                parameters: status === VEHICLE_STATUSES.INOPERATIVE.tag ? operativeParameters : inoperativeParameters
+            });
         }
 
         // Delete all lessons with this vehicle
@@ -119,11 +147,11 @@ module.exports.setVehicleUsage = async (req, res, next) => {
                 .find({
                     vehicle: vehicle._id,
                     start: {
-                        $gte: start ? dayjs(start, 'YYYY-MM-DD HH').toDate() : new Date(),
-                        ...(end && { $lte: dayjs(end, 'YYYY-MM-DD HH').toDate() })
+                        $gte: start ? dayjs(start, 'YYYY-MM-DD HH:mm') : new Date(),
+                        ...(end && { $lte: dayjs(end, 'YYYY-MM-DD HH:mm') })
                     }
                 })
-                .remove();
+                .deleteMany();
         }
 
         await vehicle.save();

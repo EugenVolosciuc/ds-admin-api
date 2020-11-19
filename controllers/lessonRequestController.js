@@ -118,7 +118,7 @@ module.exports.reviewLessonRequest = async (req, res, next) => {
 
                 await lessonRequest.remove();
 
-                res.json(lesson);
+                return res.json(lesson);
             case 'reject':
                 lessonRequest = await LessonRequest.findById(id);
                 if (!lessonRequest) throw new ErrorHandler(404, 'No lesson request found');
@@ -127,7 +127,7 @@ module.exports.reviewLessonRequest = async (req, res, next) => {
 
                 await lessonRequest.save();
 
-                res.json(lessonRequest);
+                return res.json(lessonRequest);
             default:
                 throw new ErrorHandler(400, 'Please provide a valid action: accept or deny');
         }

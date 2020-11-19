@@ -2,14 +2,14 @@ const path = require('path');
 
 const { ErrorHandler } = require('../utils/errorHandler');
 
-// @desc    Get cron jobs
+// @desc    Get recurring cron jobs
 // @route   GET /cron
 // @access  Private
 module.exports.getCronJobs = async (req, res, next) => {
     try {
-        const { cronJobs } = require('../cron/init');
+        const { recurringCronJobs } = require('../cron/init');
 
-        const cronJobsData = cronJobs.map(cronJob => {
+        const cronJobsData = recurringCronJobs.map(cronJob => {
             return {
                 name: Object.keys(cronJob)[0],
                 status: Object.values(cronJob)[0].getStatus() || 'not scheduled'
@@ -22,7 +22,7 @@ module.exports.getCronJobs = async (req, res, next) => {
     }
 }
 
-// @desc    Run action on cron job
+// @desc    Run action on recurring cron job
 // @route   POST /cron
 // @access  Private
 module.exports.runCronJobAction = async (req, res, next) => {
@@ -30,8 +30,8 @@ module.exports.runCronJobAction = async (req, res, next) => {
     try {
         if (!name || !action) throw new ErrorHandler(400, 'Provide a cron job name and action');
         
-        const { cronJobs } = require('../cron/init');
-        const cronJob = cronJobs.find(cronJob => Object.keys(cronJob)[0] === name);
+        const { recurringCronJobs } = require('../cron/init');
+        const cronJob = recurringCronJobs.find(cronJob => Object.keys(cronJob)[0] === name);
 
         cronJob[name][action]();
 

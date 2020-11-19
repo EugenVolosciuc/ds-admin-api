@@ -3,9 +3,10 @@ const { promises: fs } = require('fs');
 
 const { ErrorHandler } = require('./errorHandler');
 
-const pathToTasks = path.join(__dirname, '..', 'cron', 'tasks');
 
-module.exports.getCronJobs = async () => {
+module.exports.getCronJobs = async type => {
+    const pathToTasks = path.join(__dirname, '..', 'cron', type);
+
     const cronJobFilenames = await fs.readdir(pathToTasks);
 
     const cronJobs = await Promise.all(cronJobFilenames.map(async file => {
