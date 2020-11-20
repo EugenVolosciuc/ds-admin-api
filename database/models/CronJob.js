@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const path = require('path');
+const dayjs = require('dayjs');
 
 const { ErrorHandler } = require('../../utils/errorHandler');
 
@@ -29,6 +30,10 @@ cronJobSchema.pre('save', async function (next) {
     const id = new mongoose.Types.ObjectId();
 
     this._id = id;
+
+    // For some fucking reason, the date stored in the DB has the additional offset time, so we make up for this by subtracting the utcOffset from the time of execution
+    this.timeOfExecution = dayjs(this.timeOfExecution).subtract(this.utcOffset, 'minutes'); 
+    // console.log("CREATING JOB IN SERVER, TIME OF EXECUTION SAVED IN DB -> ", this.timeOfExecution);
 
     if (cronJob.constructor.name === 'AsyncFunction') {
         await cronJob(this.timeOfExecution, this.utcOffset, this.parameters, this._id);

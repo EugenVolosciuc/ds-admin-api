@@ -1,4 +1,5 @@
 const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
 const customParseFormat = require('dayjs/plugin/customParseFormat');
 
 const Vehicle = require('../database/models/Vehicle');
@@ -8,6 +9,7 @@ const { ErrorHandler } = require('../utils/errorHandler');
 const checkForUpdatableProperties = require('../utils/updatablePropertyChecker');
 const VEHICLE_STATUSES = require('../constants/VEHICLE_STATUSES');
 
+dayjs.extend(utc);
 dayjs.extend(customParseFormat);
 
 // @desc    Get vehicles
@@ -123,19 +125,22 @@ module.exports.setVehicleUsage = async (req, res, next) => {
 
             // "start" cron job
             if (!dayjs(start).isBefore(dayjs())) { // If start param is later before present time
-                console.log("timeOfExecution when setting vehicle usage!!!", dayjs(start, 'YYYY-MM-DD HH:mm').toDate())
+                // console.log("-----")
+                // console.log("timeOfExecution when setting vehicle usage!!!", dayjs(start, 'YYYY-MM-DD HH:mm').format())
+                // console.log("WITH UTC", dayjs.utc(start, 'YYYY-MM-DD HH:mm').format())
+                // console.log("WITHOUT UTC", dayjs(start, 'YYYY-MM-DD HH:mm').format())
                 await CronJob.create({
                     taskName: 'change_vehicle_status',
-                    timeOfExecution: dayjs(start, 'YYYY-MM-DD HH:mm').toDate(),
+                    timeOfExecution: dayjs(start, 'YYYY-MM-DD HH:mm').format(),
                     utcOffset: Number(utcOffset),
                     parameters: status === VEHICLE_STATUSES.INOPERATIVE.tag ? inoperativeParameters : operativeParameters
                 });
-            }
+            } // TODO: add else?
 
             // "end" cron job
             await CronJob.create({
                 taskName: 'change_vehicle_status',
-                timeOfExecution: dayjs(end, 'YYYY-MM-DD HH:mm').toDate(),
+                timeOfExecution: dayjs(end, 'YYYY-MM-DD HH:mm').format(),
                 utcOffset: Number(utcOffset),
                 parameters: status === VEHICLE_STATUSES.INOPERATIVE.tag ? operativeParameters : inoperativeParameters
             });
