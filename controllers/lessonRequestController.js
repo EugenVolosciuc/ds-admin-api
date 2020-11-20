@@ -102,7 +102,7 @@ module.exports.reviewLessonRequest = async (req, res, next) => {
     try {
         switch (action) {
             case 'accept':
-                lessonRequest = await LessonRequest.findById(id);
+                lessonRequest = await LessonRequest.findByIdAndDelete(id);
                 if (!lessonRequest) throw new ErrorHandler(404, 'No lesson request found');
 
                 await lessonAvailabilityChecker(user, lessonRequest);
@@ -115,8 +115,6 @@ module.exports.reviewLessonRequest = async (req, res, next) => {
                     start: new Date(lessonRequest.start),
                     end: new Date(lessonRequest.end)
                 })
-
-                await lessonRequest.remove();
 
                 return res.json(lesson);
             case 'reject':

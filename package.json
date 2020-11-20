@@ -4,6 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "dev": "nodemon server.js",
     "import:data": "node database/seeder import-data",
     "import:users": "node database/seeder import-users",
