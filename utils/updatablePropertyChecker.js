@@ -1,6 +1,6 @@
 const { ErrorHandler } = require('./errorHandler');
 
-const checkForUpdatableProperties = (updatedItem, dataToUpdate, possibleUpdates) => {
+const checkAndUpdateProperties = (updatedItem, dataToUpdate, possibleUpdates) => {
     for (const property in dataToUpdate) {
         if (possibleUpdates.includes(property)) {
             updatedItem[property] = dataToUpdate[property];
@@ -10,4 +10,4 @@ const checkForUpdatableProperties = (updatedItem, dataToUpdate, possibleUpdates)
     }
 }
 
-module.exports = checkForUpdatableProperties;
+module.exports = checkAndUpdateProperties;

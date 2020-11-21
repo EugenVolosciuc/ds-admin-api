@@ -6,7 +6,7 @@ const Vehicle = require('../database/models/Vehicle');
 const CronJob = require('../database/models/CronJob');
 const Lesson = require('../database/models/Lesson');
 const { ErrorHandler } = require('../utils/errorHandler');
-const checkForUpdatableProperties = require('../utils/updatablePropertyChecker');
+const checkAndUpdateProperties = require('../utils/updatablePropertyChecker');
 const VEHICLE_STATUSES = require('../constants/VEHICLE_STATUSES');
 
 dayjs.extend(utc);
@@ -89,7 +89,7 @@ module.exports.updateVehicle = async (req, res, next) => {
 
         if (!vehicle) throw new ErrorHandler(404, 'No vehicle found');
 
-        checkForUpdatableProperties(vehicle, dataToUpdate, possibleUpdates);
+        checkAndUpdateProperties(vehicle, dataToUpdate, possibleUpdates);
 
         await vehicle.save();
 

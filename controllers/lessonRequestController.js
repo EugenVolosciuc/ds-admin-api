@@ -2,7 +2,6 @@ const LessonRequest = require('../database/models/LessonRequest');
 const Lesson = require('../database/models/Lesson');
 const { ErrorHandler } = require('../utils/errorHandler');
 const { USER_ROLES } = require('../constants');
-const checkForUpdatableProperties = require('../utils/updatablePropertyChecker');
 const lessonAvailabilityChecker = require('../utils/lessonAvailabilityChecker');
 
 // @desc    Get paginated lesson requests 

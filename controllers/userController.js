@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const User = require('../database/models/User');
 const { ErrorHandler } = require('../utils/errorHandler');
-const checkForUpdatableProperties = require('../utils/updatablePropertyChecker');
+const checkAndUpdateProperties = require('../utils/updatablePropertyChecker');
 
 const maxAge = 3 * 24 * 60 * 60; // days, hours, minutes, seconds
 
@@ -153,7 +153,7 @@ module.exports.updateMe = async (req, res, next) => {
     const user = req.user;
 
     try {
-        checkForUpdatableProperties(user, dataToUpdate, possibleUpdates);
+        checkAndUpdateProperties(user, dataToUpdate, possibleUpdates);
 
         await user.save();
 
@@ -177,7 +177,7 @@ module.exports.updateUser = async (req, res, next) => {
 
         if (!user) throw new ErrorHandler(404, 'User not found');
 
-        checkForUpdatableProperties(user, dataToUpdate, possibleUpdates);
+        checkAndUpdateProperties(user, dataToUpdate, possibleUpdates);
 
         await user.save();
 

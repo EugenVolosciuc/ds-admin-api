@@ -1,6 +1,6 @@
 const School = require('../database/models/School');
 const { ErrorHandler } = require('../utils/errorHandler');
-const checkForUpdatableProperties = require('../utils/updatablePropertyChecker');
+const checkAndUpdateProperties = require('../utils/updatablePropertyChecker');
 
 // @desc    Get schools
 // @route   GET /schools
@@ -45,7 +45,7 @@ module.exports.createSchool = async (req, res, next) => {
     }
 }
 
-// @desc    update school
+// @desc    Update school
 // @route   PATCH /schools/:id
 // @access  Private
 module.exports.updateSchool = async (req, res, next) => {
@@ -59,7 +59,7 @@ module.exports.updateSchool = async (req, res, next) => {
 
         if (!school) throw new ErrorHandler(404, 'No school found');
 
-        checkForUpdatableProperties(school, dataToUpdate, possibleUpdates);
+        checkAndUpdateProperties(school, dataToUpdate, possibleUpdates);
 
         await school.save();
 

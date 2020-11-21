@@ -34,6 +34,10 @@ const examTypeSchema = mongoose.Schema({
     specificTime: {
         type: Boolean,
         default: true
+    },
+    isFinalExam: {
+        type: Boolean,
+        default: false
     }
 });
 

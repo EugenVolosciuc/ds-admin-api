@@ -1,7 +1,7 @@
 const Lesson = require('../database/models/Lesson');
 const { ErrorHandler } = require('../utils/errorHandler');
 const { USER_ROLES } = require('../constants');
-const checkForUpdatableProperties = require('../utils/updatablePropertyChecker');
+const checkAndUpdateProperties = require('../utils/updatablePropertyChecker');
 const lessonAvailabilityChecker = require('../utils/lessonAvailabilityChecker');
 
 // @desc    Get lessons
@@ -89,7 +89,7 @@ module.exports.updateLesson = async (req, res, next) => {
 
         if (!lesson) throw new ErrorHandler(404, 'No lesson found');
 
-        checkForUpdatableProperties(lesson, dataToUpdate, possibleUpdates);
+        checkAndUpdateProperties(lesson, dataToUpdate, possibleUpdates);
 
         await lesson.save();
 
