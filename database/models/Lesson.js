@@ -29,8 +29,6 @@ const lessonSchema = mongoose.Schema({
         type: Date,
         required: [true, 'Lesson end time is required']
     }
-}, {
-    timestamps: true
 });
 
 const Lesson = mongoose.model('Lesson', lessonSchema);

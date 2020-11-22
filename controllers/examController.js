@@ -1,13 +1,13 @@
-const Lesson = require('../database/models/Lesson');
-const { ErrorHandler } = require('../utils/errorHandler');
+const Exam = require('../database/models/Exam');
 const { USER_ROLES } = require('../constants');
 const checkAndUpdateProperties = require('../utils/updatablePropertyChecker');
 const lessonAndExamAvailabilityChecker = require('../utils/lessonAndExamAvailabilityChecker');
+const { ErrorHandler } = require('../utils/errorHandler');
 
-// @desc    Get lessons
-// @route   GET /lessons
+// @desc    Get exams
+// @route   GET /exams
 // @access  Private
-module.exports.getLessons = async (req, res, next) => {
+module.exports.getExams = async (req, res, next) => {
     const filters = req.query.filters ? JSON.parse(req.query.filters) : {};
     const { startAt, endAt, location } = filters;
 
@@ -19,18 +19,18 @@ module.exports.getLessons = async (req, res, next) => {
         const getFieldsToPopulate = () => {
             switch (user.role) {
                 case USER_ROLES.LOCATION_ADMIN.tag:
-                    return ['instructor', 'vehicle', 'student']
+                    return ['instructor', 'vehicle', 'student', 'examType']
                 case USER_ROLES.INSTRUCTOR.tag:
-                    return ['location', 'vehicle', 'student']
+                    return ['location', 'vehicle', 'student', 'examType']
                 case USER_ROLES.STUDENT.tag:
-                    return ['instructor', 'location', 'vehicle']
+                    return ['instructor', 'location', 'vehicle', 'examType']
                 case USER_ROLES.SCHOOL_ADMIN.tag:
                 default:
-                    return ['instructor', 'location', 'vehicle', 'student']
+                    return ['instructor', 'location', 'vehicle', 'student', 'examType']
             }
         }
 
-        const lessons = await Lesson
+        const exams = await Lesson
             .find({
                 start: {
                     $gte: new Date(startAt),
@@ -42,73 +42,74 @@ module.exports.getLessons = async (req, res, next) => {
             })
             .populate(getFieldsToPopulate());
 
-        res.json(lessons);
+        res.json(exams);
     } catch (error) {
         next(error);
     }
 }
 
-// @desc    Create lesson
-// @route   POST /lessons
+// @desc    Schedule exam
+// @route   POST /exams
 // @access  Private
-module.exports.createLesson = async (req, res, next) => {
-    const { vehicle, student, instructor, start, end, location } = req.body;
+module.exports.createExam = async (req, res, next) => {
+    const { vehicle, student, instructor, start, end, location, examType } = req.body;
 
     const user = req.user;
 
     try {
         await lessonAndExamAvailabilityChecker(user, req.body);
 
-        const lesson = await Lesson.create({
+        const exam = await Exam.create({
+            examType,
             vehicle,
             location: location || req.user.location,
             student: student || req.user._id,
-            instructor: instructor || req.user._id,
+            instructor: instructor || req.user._id, // TODO: check here
             start: new Date(start),
             end: new Date(end)
         });
 
-        res.json(lesson);
+        res.json(exam);
     } catch (error) {
         next(error);
     }
 }
 
-// @desc    Update lesson
-// @route   PATCH /lessons/:id
+// @desc    Update exam
+// @route   PATCH /exams/:id
 // @access  Private
-module.exports.updateLesson = async (req, res, next) => {
-    const possibleUpdates = Object.keys(Lesson.schema.obj);
+module.exports.updateExam = async (req, res, next) => {
+    const possibleUpdates = Object.keys(Exam.schema.obj);
     const dataToUpdate = req.body;
     const user = req.user;
 
     try {
-        await lessonAndExamAvailabilityChecker(user, req.body, req.params.id);
+        await examAndExamAvailabilityChecker(user, req.body, req.params.id);
 
-        const lesson = await Lesson.findById(req.params.id);
+        const exam = await Exam.findById(req.params.id);
 
-        if (!lesson) throw new ErrorHandler(404, 'No lesson found');
+        if (!exam) throw new ErrorHandler(404, 'No exam found');
 
-        checkAndUpdateProperties(lesson, dataToUpdate, possibleUpdates);
+        checkAndUpdateProperties(exam, dataToUpdate, possibleUpdates);
 
-        await lesson.save();
+        await exam.save();
 
-        res.json(lesson);
+        res.json(exam);
     } catch (error) {
         next(error);
     }
 }
 
-// @desc    Delete lesson
-// @route   DELETE /lessons/:id
+// @desc    Delete exam
+// @route   DELETE /exams/:id
 // @access  Private
-module.exports.deleteLesson = async (req, res, next) => {
+module.exports.deleteExam = async (req, res, next) => {
     try {
-        const lesson = await Lesson.findByIdAndDelete(req.params.id);
+        const exam = await Exam.findByIdAndDelete(req.params.id);
 
-        if (!lesson) throw new ErrorHandler(404, 'No lesson found');
+        if (!exam) throw new ErrorHandler(404, 'No exam found');
 
-        res.json(lesson);
+        res.json(exam);
     } catch (error) {
         next(error);
     }

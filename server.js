@@ -29,6 +29,7 @@ app.use('/lesson-requests', require('./routes/lessonRequestRoutes'));
 app.use('/cron', require('./routes/cronRoutes'));
 app.use('/exam-types', require('./routes/examTypeRoutes'));
 app.use('/misc', require('./routes/miscRoutes'));
+app.use('/exams', require('./routes/examRoutes'));
 
 // Error handling
 app.use((err, req, res, next) => {

@@ -17,7 +17,8 @@
     "delete:vehicles": "node database/seeder delete-vehicles",
     "import:lessons": "node database/seeder import-lessons",
     "delete:lessons": "node database/seeder delete-lessons",
-    "delete:cron": "node database/seeder delete-cron-jobs"
+    "delete:cron": "node database/seeder delete-cron-jobs",
+    "delete:exam-types": "node database/seeder delete-exam-types"
   },
   "author": "Eugen Volosciuc",
   "license": "ISC",

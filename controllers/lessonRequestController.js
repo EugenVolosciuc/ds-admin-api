@@ -2,7 +2,7 @@ const LessonRequest = require('../database/models/LessonRequest');
 const Lesson = require('../database/models/Lesson');
 const { ErrorHandler } = require('../utils/errorHandler');
 const { USER_ROLES } = require('../constants');
-const lessonAvailabilityChecker = require('../utils/lessonAvailabilityChecker');
+const lessonAndExamAvailabilityChecker = require('../utils/lessonAndExamAvailabilityChecker');
 
 // @desc    Get paginated lesson requests 
 // @route   GET /lesson-requests
@@ -70,7 +70,7 @@ module.exports.createLessonRequest = async (req, res, next) => {
     const user = req.user;
 
     try {
-        await lessonAvailabilityChecker(user, req.body);
+        await lessonAndExamAvailabilityChecker(user, req.body);
 
         const lessonRequest = await LessonRequest.create({
             vehicle,
@@ -104,7 +104,7 @@ module.exports.reviewLessonRequest = async (req, res, next) => {
                 lessonRequest = await LessonRequest.findByIdAndDelete(id);
                 if (!lessonRequest) throw new ErrorHandler(404, 'No lesson request found');
 
-                await lessonAvailabilityChecker(user, lessonRequest);
+                await lessonAndExamAvailabilityChecker(user, lessonRequest);
 
                 const lesson = await Lesson.create({
                     vehicle: lessonRequest.vehicle,

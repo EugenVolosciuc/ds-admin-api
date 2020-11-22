@@ -6,6 +6,7 @@ const Vehicle = require('./models/Vehicle');
 const Location = require('./models/Location');
 const Lesson = require('./models/Lesson');
 const CronJob = require('./models/CronJob');
+const ExamType = require('./models/ExamType');
 const connectToDB = require('./connect');
 
 const importUsers = async () => {
@@ -158,6 +159,18 @@ const deleteLessons = async () => {
     }
 }
 
+const deleteExamTypes = async () => {
+    try {
+        console.log("Deleting exam types...");
+        await ExamType.deleteMany();
+
+        console.log("Exam types deleted successfuly!");
+    } catch (error) {
+        console.error("An error occured while deleting exam types: ", error);
+        process.exit(1);
+    }
+}
+
 const deleteCronJobs = async () => {
     try {
         console.log("Deleting cron jobs...");
@@ -182,6 +195,8 @@ const importData = async () => {
     await importLessons();
     console.log("-");
     await deleteCronJobs();
+    console.log("-");
+    await deleteExamTypes();
 
     console.log("-----")
     console.log("Imported all data successfully!");
@@ -226,6 +241,9 @@ const mainSeedProcess = async () => {
             break;
         case 'delete-cron-jobs':
             await deleteCronJobs();
+            break;
+        case 'delete-exam-types':
+            await deleteExamTypes();
             break;
         default:
             console.log("Please provide a valid argument")

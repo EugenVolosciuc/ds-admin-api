@@ -38,6 +38,10 @@ const examTypeSchema = mongoose.Schema({
     isFinalExam: {
         type: Boolean,
         default: false
+    },
+    withInstructor: {
+        type: Boolean,
+        default: false
     }
 });
 
