@@ -125,10 +125,6 @@ module.exports.setVehicleUsage = async (req, res, next) => {
 
             // "start" cron job
             if (!dayjs(start).isBefore(dayjs())) { // If start param is later before present time
-                // console.log("-----")
-                // console.log("timeOfExecution when setting vehicle usage!!!", dayjs(start, 'YYYY-MM-DD HH:mm').format())
-                // console.log("WITH UTC", dayjs.utc(start, 'YYYY-MM-DD HH:mm').format())
-                // console.log("WITHOUT UTC", dayjs(start, 'YYYY-MM-DD HH:mm').format())
                 await CronJob.create({
                     taskName: 'change_vehicle_status',
                     timeOfExecution: dayjs(start, 'YYYY-MM-DD HH:mm').format(),

@@ -2,7 +2,6 @@ const express = require('express');
 
 const { getLessons, createLesson, updateLesson, deleteLesson } = require('../controllers/lessonController');
 const { requireAuth } = require('../middleware/authMiddleware');
-const { USER_ROLES } = require('../constants');
 
 const router = express.Router();
 

@@ -1,6 +1,5 @@
 const express = require('express');
 
-const Exam = require('../database/models/Exam');
 const { getExams, createExam, updateExam, deleteExam } = require('../controllers/examController');
 const { requireAuth } = require('../middleware/authMiddleware');
 const { USER_ROLES } = require('../constants');

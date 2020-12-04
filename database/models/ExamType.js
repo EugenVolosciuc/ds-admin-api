@@ -6,7 +6,7 @@ const validExaminationTypes = Object.keys(EXAMINATION_TYPES);
 const validExamLocations = Object.keys(EXAM_LOCATIONS);
 
 const examTypeSchema = mongoose.Schema({
-    name: {
+    name: { // TODO: Make it unique
         type: String,
         required: [true, 'Exam type name is required']
     },
